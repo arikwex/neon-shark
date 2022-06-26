@@ -12,6 +12,7 @@ function Boatman(x, y, angle) {
   let aimPrep = 0;
   let lockedAim = 0;
   let quickness = 0.4;
+  let ripple = 0;
 
   function update(state, dT) {
     const dax = state.shark.getX() - x;
@@ -24,7 +25,8 @@ function Boatman(x, y, angle) {
     if (d2 > 4000) {
       const d1 = Math.sqrt(d2);
       if (aimPrep < 2.4) {
-        targetAim = Math.atan2(day + vy * d1 * 0.001, dax + vx * d1 * 0.001);
+        let forcast = 0.0014 * aimPrep;
+        targetAim = Math.atan2(day + vy * d1 * forcast, dax + vx * d1 * forcast);
         lockedAim = targetAim;
       } else {
         targetAim = lockedAim;
@@ -48,6 +50,21 @@ function Boatman(x, y, angle) {
     aim += dAim * 3.0 * dT;
 
     // TODO bash physics
+
+    // Ripple animator
+    ripple += dT;
+    if (ripple > 0.3) {
+      const rippleDir = Math.random() * 6.28;
+      const px = x + Math.cos(angle + rippleDir) * 30;
+      const py = y + Math.sin(angle + rippleDir) * 70;
+      bus.emit('ripple', {
+        x: px, y: py,
+        size: 20 + Math.random() * 20,
+        direction: rippleDir,
+        duration: 2,
+     });
+      ripple = 0;
+    }
 
     if (y - 400 > state.level.getProgress() && aimPrep < 0) {
       remove = true;

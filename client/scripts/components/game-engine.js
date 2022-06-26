@@ -8,6 +8,7 @@ import Harpoon from './harpoon.js';
 import Boatman from './boatman.js';
 import LineParticle from './line-particle.js';
 import CircleParticle from './circle-particle.js';
+import RippleParticle from './ripple-particle.js';
 
 const GameEngine = () => {
   const state = {
@@ -20,7 +21,7 @@ const GameEngine = () => {
     particles: [],
   };
 
-  // state.boats.push(new Boatman(0, -400, 0.2));
+  state.boats.push(new Boatman(0, -400, 0.2));
 
   function initialize() {
     bus.on('feed', ({n}) => {
@@ -55,6 +56,10 @@ const GameEngine = () => {
         const duration = Math.random() * 1.0 + 0.6;
         state.particles.push(new CircleParticle(px, py, vx, vy, 10, {r: 250, g: 40, b: 40, a: 0.2}, duration));
       }
+    });
+
+    bus.on('ripple', ({x, y, direction, size, duration}) => {
+      state.particles.push(new RippleParticle(x, y, direction, size, duration));
     });
 
     bus.on('spawn:fish', () => {
