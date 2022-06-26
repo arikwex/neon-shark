@@ -1,4 +1,5 @@
 import bus from '../bus.js';
+import { canvas } from '../ui/canvas.js';
 import Level from './level.js';
 import Shark from './shark.js';
 import Fish from './fish.js';
@@ -13,10 +14,6 @@ const GameEngine = () => {
     particles: [],
   };
 
-  state.fishes.push(new Fish(0, -300, 0));
-  state.fishes.push(new Fish(-100, -400, 0));
-  state.fishes.push(new Fish(100, -300, 0));
-
   function initialize() {
     bus.on('bite', ({x, y}) => {
       const baseHeading = state.shark.getHeading();
@@ -28,8 +25,9 @@ const GameEngine = () => {
         const duration = Math.random() * 0.4 + 0.1;
         state.particles.push(new LineParticle(px, py, vx, vy, {r: 250, g: 240, b: 230}, duration));
       }
-      state.level.triggerShake(0.5);
+      state.level.triggerShake(0.4);
     });
+
     bus.on('blood', ({x, y, n}) => {
       for (let i = 0; i < n; i++) {
         const px = x;
@@ -38,6 +36,18 @@ const GameEngine = () => {
         const vy = (Math.random() - 0.5) * 120;
         const duration = Math.random() * 1.0 + 0.6;
         state.particles.push(new CircleParticle(px, py, vx, vy, 10, {r: 250, g: 40, b: 40, a: 0.2}, duration));
+      }
+    });
+
+    bus.on('spawn:fish', () => {
+      const n = 1 + Math.random() * 3;
+      const dir = Math.PI + (Math.random() - 0.5) * 2;
+      const x = (Math.random() - 0.5) * 300;
+      const y = state.level.getProgress() - canvas.height - 100;
+      for (let i = 0; i < n; i++) {
+        const dy = -Math.random() * 250;
+        const dx = (Math.random() - 0.5) * 150;
+        state.fishes.push(new Fish(x + dx, y + dy, dir + (Math.random() - 0.5) * 0.1));
       }
     });
   }

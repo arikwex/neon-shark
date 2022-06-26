@@ -1,3 +1,4 @@
+import bus from '../bus.js';
 import { canvas } from '../ui/canvas.js';
 import Foliage from './foliage.js';
 
@@ -5,18 +6,29 @@ function Level(engineState) {
   let shake = 0;
   let shakeAxis = 0;
   let progress = canvas.height * 0.2;
+  let eventTicker = 0;
   const foliages = [];
 
   function update(state, dT) {
-    const newProgress = progress + (state.shark.getY() + canvas.height * 0.4 - progress) * 2.0 * dT;
+    const newProgress = progress + (state.shark.getY() + canvas.height * 0.3 - progress) * 2.0 * dT;
+    const prevProgress = progress;
     progress = Math.min(newProgress, progress);
+    eventTicker += prevProgress - progress;
 
+    // Foliage updates
     foliages.forEach((f) => f.update(state, dT));
 
+    // Camera / Level shake
     if (shake > 0) {
       shake -= dT;
     } else {
       shake = 0;
+    }
+
+    // Event spawner
+    if (eventTicker > 500) {
+      bus.emit('spawn:fish');
+      eventTicker -= 1000;
     }
   }
 
@@ -26,7 +38,7 @@ function Level(engineState) {
   }
 
   function getShakeAmount() {
-    return 15 * shake * (Math.cos(shake * 40) + Math.random() * 0.35);
+    return 20 * shake * (Math.cos(shake * 60) * 0.8 + Math.random() * 0.5);
   }
 
   function getShakeX(a) {

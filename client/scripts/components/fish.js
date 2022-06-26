@@ -5,23 +5,49 @@ const SKIN_COLOR = '#d93';
 
 function Fish(x, y, angle) {
   let anim = 0;
-  let eaten = false;
+  let wave = Math.random() * 100;
+  let wavePulse = Math.random() * 2 + 3;
+  let remove = false;
 
   function update(state, dT) {
     // Motion
     const speed = 60;
-    x += Math.sin(angle) * dT * speed;
+    const vx = Math.sin(angle);
+    x += vx * dT * speed;
     y -= Math.cos(angle) * dT * speed;
-    angle += 1.0 * dT;
-    anim += 6.0 * dT;
+    angle += Math.cos(wave) * dT;
+    anim += 2.0 * dT;
+    wave += wavePulse * dT;
 
     // Chomp physics
     const dx = state.shark.getMouthX() - x;
     const dy = state.shark.getMouthY() - y;
-    if (dx * dx + dy * dy < 550) {
-      eaten = true;
+    if (dx * dx + dy * dy < 600) {
+      remove = true;
       bus.emit('bite', { x, y });
       bus.emit('blood', { x, y, n: 3 });
+    }
+
+    // Boundary physics
+    const leftLimit = state.level.levelMapLeft(y);
+    const rightLimit = state.level.levelMapRight(y);
+    const bottomLimit = state.level.getProgress();
+    if (x < leftLimit + 90 && vx < 0) {
+      angle -= 1.0 * dT;
+    }
+    if (x < leftLimit + 20) {
+      x = leftLimit + 20;
+      angle -= 1.0 * dT;
+    }
+    if (x > rightLimit - 90 && vx > 0) {
+      angle += 1.0 * dT;
+    }
+    if (x > rightLimit - 20) {
+      x = rightLimit - 20;
+      angle += 1.0 * dT;
+    }
+    if (y > bottomLimit + 50) {
+      remove = true;
     }
   }
 
@@ -52,7 +78,7 @@ function Fish(x, y, angle) {
   }
 
   function shouldRemove() {
-    return eaten;
+    return remove;
   }
 
   return {
