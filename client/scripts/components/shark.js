@@ -15,6 +15,7 @@ function Shark() {
   let anim = 0;
 
   function update(state, dT) {
+    // Controls
     let tx = 0;
     let ty = 0;
     const MAX_FORCE = 800;
@@ -24,6 +25,7 @@ function Shark() {
     if (controllerManager.getLeft()) { tx = -MAX_FORCE; }
     if (controllerManager.getRight()) { tx = MAX_FORCE; }
 
+    // Motion limits
     const speed = Math.sqrt(vx * vx + vy * vy);
     let mag = Math.sqrt(tx * tx + ty * ty);
     if (mag > MAX_FORCE) {
@@ -31,9 +33,11 @@ function Shark() {
       ty = ty / mag * MAX_FORCE;
     }
 
+    // Thrust physics
     vx += tx * dT;
     vy += ty * dT;
 
+    // Turn physics
     let targetHeading = Math.atan2(tx, -ty);
     if (mag < 10) {
       targetHeading = heading;
@@ -44,13 +48,33 @@ function Shark() {
     heading += omega * 5.0 * MAX_TURN * dT;
     moveArc += (-omega - moveArc) * 5.0 * MAX_TURN * dT;
 
+    // Viscosity physics
     vx -= vx * 2.0 * dT;
     vy -= vy * 2.0 * dT;
-    const speed2 = Math.sqrt(vx * vx + vy * vy);
-    const dS = Math.max(speed2 - speed, 0);
 
+    // Boundary physics
+    const leftLimit = state.level.levelMapLeft(y);
+    const rightLimit = state.level.levelMapRight(y);
+    const bottomLimit = state.level.getProgress();
+    if (x < leftLimit + 25) {
+      x = leftLimit + 25;
+      vx *= -0.5;
+    }
+    if (x > rightLimit - 25) {
+      x = rightLimit - 25;
+      vx *= -0.5;
+    }
+    if (y > bottomLimit - 25) {
+      y = bottomLimit - 25;
+    }
+
+    // Motion physics
     x += vx * dT * 0.25 + Math.sin(heading) * speed * dT * 0.75;
     y += vy * dT * 0.25 - Math.cos(heading) * speed * dT * 0.75;
+
+    // Animation tracker
+    const speed2 = Math.sqrt(vx * vx + vy * vy);
+    const dS = Math.max(speed2 - speed, 0);
     anim += (speed * 0.4 + dS * 40.0) * dT / 75.0 + 0.2 * dT + Math.abs(omega) * dT;
   }
 
