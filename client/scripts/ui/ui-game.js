@@ -22,6 +22,7 @@ function render(gameEngine) {
   state.shark.render(ctx);
   state.particles.forEach((p) => p.render(ctx));
   state.level.render(ctx);
+  state.boats.forEach((b) => b.render(ctx));
 
   ctx.setTransform(xfm);
 

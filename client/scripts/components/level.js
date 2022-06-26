@@ -38,7 +38,7 @@ function Level(engineState) {
   }
 
   function getShakeAmount() {
-    return 20 * shake * (Math.cos(shake * 60) * 0.8 + Math.random() * 0.5);
+    return 10 * shake * (Math.cos(shake * 60) * 0.8 + Math.random() * 0.5);
   }
 
   function getShakeX(a) {

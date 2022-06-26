@@ -4,6 +4,7 @@ import Level from './level.js';
 import Stats from './stats.js';
 import Shark from './shark.js';
 import Fish from './fish.js';
+import Boatman from './boatman.js';
 import LineParticle from './line-particle.js';
 import CircleParticle from './circle-particle.js';
 
@@ -13,8 +14,11 @@ const GameEngine = () => {
     level: new Level(),
     shark: new Shark(),
     fishes: [],
+    boats: [],
     particles: [],
   };
+
+  state.boats.push(new Boatman(0, -300, 0.2));
 
   function initialize() {
     bus.on('feed', ({n}) => {
@@ -67,9 +71,11 @@ const GameEngine = () => {
     state.shark.update(state, dT);
     state.level.update(state, dT);
     state.fishes.forEach((f) => f.update(state, dT));
+    state.boats.forEach((b) => b.update(state, dT));
     state.particles.forEach((p) => p.update(state, dT));
 
     filterRemove(state.fishes);
+    filterRemove(state.boats);
     filterRemove(state.particles);
   }
 
