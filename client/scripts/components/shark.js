@@ -9,24 +9,54 @@ function Shark() {
   let y = 0;
   let vx = 0;
   let vy = 0;
+  let omega = 0;
   let heading = 0;
+  let arc = 0;
   let anim = 0;
 
   function update(dT) {
-    if (controllerManager.getUp()) {
-      vy -= dT * 200;
-    }
-    if (controllerManager.getLeft()) {
-      vx -= dT * 200;
+    let tx = 0;
+    let ty = 0;
+    const MAX_FORCE = 600;
+    const MAX_TURN = 1 * MAX_FORCE / 600;
+    if (controllerManager.getUp()) { ty = -MAX_FORCE; }
+    if (controllerManager.getDown()) { ty = MAX_FORCE; }
+    if (controllerManager.getLeft()) { tx = -MAX_FORCE; }
+    if (controllerManager.getRight()) { tx = MAX_FORCE; }
+
+    const speed = Math.sqrt(vx * vx + vy * vy);
+    let mag = Math.sqrt(tx * tx + ty * ty);
+    if (mag > MAX_FORCE) {
+      tx = tx / mag * MAX_FORCE;
+      ty = ty / mag * MAX_FORCE;
     }
 
-    const targetHeading = Math.atan2(vx, -vy);
-    heading = targetHeading;
-    vx -= vx * 2.0 * dT;
-    vy -= vy * 2.0 * dT;
-    x += vx * dT;
-    y += vy * dT;
-    anim += Math.sqrt(vx * vx + vy * vy) * dT / 30.0;
+    vx += tx * dT;
+    vy += ty * dT;
+
+    let targetHeading = Math.atan2(tx, -ty);
+    if (mag < 10) {
+      targetHeading = heading;
+    }
+    const dH = turn(targetHeading, heading, 3.14);
+    omega += (dH - omega) * 22.0 * MAX_TURN * dT;
+    omega = Math.max(Math.min(omega, MAX_TURN), -MAX_TURN);
+    heading += omega * 5.0 * MAX_TURN * dT;
+    arc += (-omega - arc) * 5.0 * MAX_TURN * dT;
+
+    vx -= vx * 3.0 * dT;
+    vy -= vy * 3.0 * dT;
+
+    x += vx * dT * 0.5 + Math.sin(heading) * speed * dT;
+    y += vy * dT * 0.5 - Math.cos(heading) * speed * dT;
+    anim += speed * dT / 50.0 + 0.2 * dT + Math.abs(omega) * dT;
+  }
+
+  function turn(a1, a2, maxRate) {
+    let angle = a1 - a2;
+    while (angle < -Math.PI) { angle += 2 * Math.PI; }
+    while (angle > Math.PI) { angle -= 2 * Math.PI; }
+    return Math.min(Math.max(angle, -maxRate), maxRate);
   }
 
   function render(ctx) {
@@ -37,7 +67,6 @@ function Shark() {
     ctx.fillStyle = SKIN_COLOR;
 
     const xfm = ctx.getTransform();
-    const arc = 0;//heading;
 
     // Upper Torso
     ctx.setTransform(xfm);
@@ -59,8 +88,8 @@ function Shark() {
     // Head
     const a1 = Math.cos(anim * 4 + 0);
     const t1 = Math.cos(anim * 4 + 0);
-    ctx.translate(-t1 * 3.5 - Math.sin(arc) * 4, -8);
-    ctx.rotate(a1 * 0.15 - arc);
+    ctx.translate(-t1 * 3.5 - Math.sin(arc * 0.3) * 4, -8);
+    ctx.rotate(a1 * 0.15 - arc * 0.3);
     ctx.beginPath();
     ctx.moveTo(-SW, 0);
     ctx.lineTo(-SW * 0.6, -40);
