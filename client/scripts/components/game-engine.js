@@ -20,11 +20,17 @@ const GameEngine = () => {
     particles: [],
   };
 
-  state.boats.push(new Boatman(0, -400, 0.2));
+  // state.boats.push(new Boatman(0, -400, 0.2));
 
   function initialize() {
     bus.on('feed', ({n}) => {
       state.stats.feed(n);
+    });
+
+    bus.on('shark:hit', () => {
+      state.stats.removeHealth(1);
+      state.shark.hit();
+      state.level.hit();
     });
 
     bus.on('bite', ({x, y}) => {
@@ -63,6 +69,12 @@ const GameEngine = () => {
       }
     });
 
+    bus.on('spawn:boatman', () => {
+      const x = (Math.random() - 0.5) * 300;
+      const y = state.level.getProgress() - canvas.height - 100;
+      state.boats.push(new Boatman(x, y, (Math.random() - 0.5) * 4));
+    });
+
     bus.on('harpoon', ({x, y, aim}) => {
       state.harpoons.push(new Harpoon(x, y, aim));
     });
@@ -70,8 +82,12 @@ const GameEngine = () => {
 
   function cleanup() {
     bus.off('bite');
+    bus.off('feed');
     bus.off('blood');
+    bus.off('shark:hit');
     bus.off('spawn:fish');
+    bus.off('spawn:boatman');
+    bus.off('harpoon');
   }
 
   function update(dT) {

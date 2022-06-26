@@ -7,6 +7,7 @@ function Level(engineState) {
   let shakeAxis = 0;
   let progress = canvas.height * 0.2;
   let eventTicker = 0;
+  let bloodMask = 0;
   const foliages = [];
 
   function update(state, dT) {
@@ -27,9 +28,23 @@ function Level(engineState) {
 
     // Event spawner
     if (eventTicker > 500) {
-      bus.emit('spawn:fish');
-      eventTicker -= 800;
+      if (Math.random() > 0.5) {
+        bus.emit('spawn:boatman');
+      } else {
+        bus.emit('spawn:fish');
+      }
+      eventTicker -= 500 + Math.random() * 500;
     }
+
+    // Camera effect
+    if (bloodMask > 0) {
+      bloodMask -= dT;
+    }
+  }
+
+  function hit() {
+    triggerShake(0.5);
+    bloodMask = 0.6;
   }
 
   function triggerShake(s) {
@@ -38,7 +53,7 @@ function Level(engineState) {
   }
 
   function getShakeAmount() {
-    return 10 * shake * (Math.cos(shake * 60) * 0.8 + Math.random() * 0.5);
+    return 6 * shake * (Math.cos(shake * 60) * 0.8 + Math.random() * 0.5);
   }
 
   function getShakeX(a) {
@@ -121,6 +136,10 @@ function Level(engineState) {
     return progress;
   }
 
+  function getBloodMask() {
+    return bloodMask;
+  }
+
   for (let i = 200; i > -canvas.height; ) {
     foliages.push(new Foliage(-400 - Math.random() * 10, i, Math.random() * 0.4 - 0.2, levelMap, getProgress));
     i -= 16 + Math.random() * 50;
@@ -133,6 +152,7 @@ function Level(engineState) {
   return {
     update,
     render,
+    hit,
     getProgress,
     levelMapLeft,
     levelMapRight,
@@ -141,6 +161,7 @@ function Level(engineState) {
     getShakeY,
     getShakeRotation,
     triggerShake,
+    getBloodMask,
   };
 }
 

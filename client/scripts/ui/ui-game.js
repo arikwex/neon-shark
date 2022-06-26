@@ -78,6 +78,14 @@ function render(gameEngine) {
   ctx.fillText(`${FISH} / ${MAX_FISH}`, 60, 3);
 
   ctx.setTransform(xfm);
+
+  // Blood mask
+  const bloodMask = state.level.getBloodMask();
+  if (bloodMask > 0) {
+    const alpha = bloodMask * bloodMask;
+    ctx.fillStyle = `rgba(255,0,0,${alpha})`;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
 }
 
 export default {

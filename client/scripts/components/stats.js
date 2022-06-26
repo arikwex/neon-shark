@@ -14,6 +14,13 @@ function Stats() {
     }
   }
 
+  function removeHealth(hp) {
+    health -= hp;
+    if (health <= 0) {
+      health = 0;
+    }
+  }
+
   function getHealth() {
     return health;
   }
@@ -32,6 +39,7 @@ function Stats() {
 
   return {
     feed,
+    removeHealth,
     getHealth,
     getMaxHealth,
     getFish,

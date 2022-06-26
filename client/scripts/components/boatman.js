@@ -21,7 +21,7 @@ function Boatman(x, y, angle) {
     const vy = state.shark.getVY();
     let targetAim = 0;
 
-    if (d2 > 4000 && Math.abs(day) < 750) {
+    if (d2 > 4000) {
       const d1 = Math.sqrt(d2);
       if (aimPrep < 2.4) {
         targetAim = Math.atan2(day + vy * d1 * 0.001, dax + vx * d1 * 0.001);
@@ -47,14 +47,10 @@ function Boatman(x, y, angle) {
     const dAim = turn(targetAim, aim, 7);
     aim += dAim * 3.0 * dT;
 
-    // Chomp physics
-    const dx = state.shark.getMouthX() - x;
-    const dy = state.shark.getMouthY() - y;
-    if (dx * dx + dy * dy < 600) {
-      // remove = true;
-      // bus.emit('feed', { n: 1 });
-      // bus.emit('bite', { x, y });
-      // bus.emit('blood', { x, y, n: 3 });
+    // TODO bash physics
+
+    if (y - 400 > state.level.getProgress() && aimPrep < 0) {
+      remove = true;
     }
   }
 

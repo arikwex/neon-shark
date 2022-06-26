@@ -13,6 +13,8 @@ function Shark() {
   let heading = 0;
   let moveArc = 0;
   let anim = 0;
+  let wince = 0;
+  let winceDirection = 0;
 
   function update(state, dT) {
     // Controls
@@ -76,6 +78,11 @@ function Shark() {
     const speed2 = Math.sqrt(vx * vx + vy * vy);
     const dS = Math.max(speed2 - speed, 0);
     anim += (speed * 0.4 + dS * 40.0) * dT / 75.0 + 0.2 * dT + Math.abs(omega) * dT;
+    if (wince > 0) {
+      wince -= dT;
+    } else {
+      wince = 0;
+    }
   }
 
   function turn(a1, a2, maxRate) {
@@ -121,7 +128,7 @@ function Shark() {
     ctx.scale(0.75, 0.75);
     ctx.fillStyle = SKIN_COLOR;
 
-    const arc = moveArc * 0.9;
+    const arc = moveArc * 0.9 + winceDirection * wince * wince;
     const xfm = ctx.getTransform();
 
     // Upper Torso
@@ -194,9 +201,20 @@ function Shark() {
     ctx.setTransform(baseXfm);
   }
 
+  function hit() {
+    vx *= 0.25;
+    vy *= 0.25;
+    wince = 1;
+    winceDirection = 1;
+    if (Math.random() > 0.5) {
+      winceDirection = -1;
+    }
+  }
+
   return {
     update,
     render,
+    hit,
     getX,
     getY,
     getVX,

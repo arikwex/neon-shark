@@ -29,6 +29,7 @@ function Harpoon(x, y, angle) {
       const dy = sy + cy * i - y;
       if (dx * dx + dy * dy < 700) {
         bus.emit('blood', { x, y, n: 3 });
+        bus.emit('shark:hit');
         remove = true;
         break;
       }
