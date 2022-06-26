@@ -8,15 +8,21 @@ function Fish(x, y, angle) {
   let wave = Math.random() * 100;
   let wavePulse = Math.random() * 2 + 3;
   let remove = false;
+  let scared = 0;
+
+  bus.on('blood', onBlood);
 
   function update(state, dT) {
     // Motion
-    const speed = 60;
+    let speed = 60;
+    if (scared > 0) {
+      speed = 200;
+    }
     const vx = Math.sin(angle);
     x += vx * dT * speed;
     y -= Math.cos(angle) * dT * speed;
     angle += Math.cos(wave) * dT;
-    anim += 2.0 * dT;
+    anim += speed / 30.0 * dT;
     wave += wavePulse * dT;
 
     // Chomp physics
@@ -49,6 +55,12 @@ function Fish(x, y, angle) {
     if (y > bottomLimit + 50) {
       remove = true;
     }
+
+    // Scared behavior
+    if (scared > 0) {
+      scared -= dT;
+      angle += 10.0 * (Math.random() - 0.5) * dT;
+    }
   }
 
   function render(ctx) {
@@ -77,7 +89,14 @@ function Fish(x, y, angle) {
     ctx.setTransform(baseXfm);
   }
 
+  function onBlood() {
+    scared = 1 + Math.random() * 1.5;
+  }
+
   function shouldRemove() {
+    if (remove) {
+      bus.off('blood', onBlood);
+    }
     return remove;
   }
 
