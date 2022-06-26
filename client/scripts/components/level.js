@@ -28,7 +28,7 @@ function Level(engineState) {
     // Event spawner
     if (eventTicker > 500) {
       bus.emit('spawn:fish');
-      eventTicker -= 1000;
+      eventTicker -= 800;
     }
   }
 

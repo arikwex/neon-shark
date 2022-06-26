@@ -30,6 +30,7 @@ function Fish(x, y, angle) {
     const dy = state.shark.getMouthY() - y;
     if (dx * dx + dy * dy < 600) {
       remove = true;
+      bus.emit('feed', { n: 1 });
       bus.emit('bite', { x, y });
       bus.emit('blood', { x, y, n: 3 });
     }

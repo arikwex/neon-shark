@@ -1,6 +1,7 @@
 import bus from '../bus.js';
 import { canvas } from '../ui/canvas.js';
 import Level from './level.js';
+import Stats from './stats.js';
 import Shark from './shark.js';
 import Fish from './fish.js';
 import LineParticle from './line-particle.js';
@@ -8,6 +9,7 @@ import CircleParticle from './circle-particle.js';
 
 const GameEngine = () => {
   const state = {
+    stats: new Stats(),
     level: new Level(),
     shark: new Shark(),
     fishes: [],
@@ -15,6 +17,10 @@ const GameEngine = () => {
   };
 
   function initialize() {
+    bus.on('feed', ({n}) => {
+      state.stats.feed(n);
+    });
+
     bus.on('bite', ({x, y}) => {
       const baseHeading = state.shark.getHeading();
       for (let i = -2; i <= 2; i++) {
