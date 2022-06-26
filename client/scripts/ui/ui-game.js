@@ -6,10 +6,11 @@ function render(gameEngine) {
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
 
+  const state = gameEngine.state;
   ctx.save();
-  ctx.translate(canvas.width / 2, canvas.height - 200);
+  ctx.translate(canvas.width / 2, canvas.height - state.level.getProgress());
 
-  gameEngine.state.shark.render(ctx);
+  state.shark.render(ctx);
 
   // Walls
   ctx.fillStyle = '#111';

@@ -14,7 +14,7 @@ function Shark() {
   let moveArc = 0;
   let anim = 0;
 
-  function update(dT) {
+  function update(state, dT) {
     let tx = 0;
     let ty = 0;
     const MAX_FORCE = 800;
@@ -57,6 +57,10 @@ function Shark() {
     while (angle < -Math.PI) { angle += 2 * Math.PI; }
     while (angle > Math.PI) { angle -= 2 * Math.PI; }
     return Math.min(Math.max(angle, -maxRate), maxRate);
+  }
+
+  function getY() {
+    return y;
   }
 
   function render(ctx) {
@@ -142,6 +146,7 @@ function Shark() {
   return {
     update,
     render,
+    getY,
   };
 };
 
