@@ -76,7 +76,8 @@ function Shark() {
   }
 
   function render(ctx) {
-    ctx.save();
+    const baseXfm = ctx.getTransform();
+
     ctx.translate(x, y);
     ctx.rotate(heading);
     ctx.scale(0.75, 0.75);
@@ -152,7 +153,7 @@ function Shark() {
     ctx.lineTo(2, 17);
     ctx.fill();
 
-    ctx.restore();
+    ctx.setTransform(baseXfm);
   }
 
   return {

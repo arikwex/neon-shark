@@ -10,6 +10,7 @@ function render(gameEngine) {
   const xfm = ctx.getTransform();
   ctx.translate(canvas.width / 2, canvas.height - state.level.getProgress());
 
+  state.fishes.forEach((f) => f.render(ctx));
   state.shark.render(ctx);
   state.level.render(ctx);
 

@@ -1,6 +1,6 @@
 import { canvas } from '../ui/canvas.js';
 
-function Foliage(x, y, baseAngle, mass) {
+function Foliage(x, y, baseAngle) {
   let angle = 0;
   let omega = 0;
   let acc = 0;
@@ -19,21 +19,27 @@ function Foliage(x, y, baseAngle, mass) {
     l2 = Math.random() * 40 + 10;
     l3 = Math.random() * 40 + 10;
     mode = Math.random() > 0.5;
+    if (mode) {
+      mass = (l1 + l2 + l3) / 3 / 25;
+    } else {
+      mass = (l1 + l2) / 2 / 25;
+    }
   }
+  reconfigure();
 
   function update(state, dT) {
     const dx = state.shark.getX() - x;
     const dy = state.shark.getY() - y;
     const d2 = dx * dx + dy * dy;
-    omega += (state.shark.getVX() * px + state.shark.getVY() * py) * dT / (15 + d2 * 0.008);
+    omega += (state.shark.getVX() * px + state.shark.getVY() * py) * dT / (20 + d2 * 0.005);
 
     a = Date.now() * 0.001;
     const turbulence = Math.cos(x * 0.01 + y * 0.02 + a) + Math.sin(y * 0.01 + a);
     omega += (-angle * 20.0 - omega * 3.0 + turbulence * 1.0) / mass * dT;
     angle += omega * dT;
 
-    if (y - 50 > state.level.getProgress()) {
-      y -= canvas.height + 100 + 50 * Math.random();
+    if (y - 100 > state.level.getProgress()) {
+      y -= canvas.height + 100;
       reconfigure();
     }
   }
@@ -43,7 +49,7 @@ function Foliage(x, y, baseAngle, mass) {
     ctx.translate(x, y);
     ctx.rotate(baseAngle + angle);
 
-    ctx.lineWidth = 10.0;
+    ctx.lineWidth = 6.0;
     ctx.strokeStyle = '#111';
     if (mode) {
       ctx.beginPath();

@@ -6,12 +6,12 @@ function Level() {
   const foliages = [];
 
   for (let i = 200; i > -canvas.height; ) {
-    foliages.push(new Foliage(-400 - Math.random() * 10, i, Math.random() * 0.4 - 0.2, 1));
-    i -= 16 + Math.random() * 80;
+    foliages.push(new Foliage(-400 - Math.random() * 20, i, Math.random() * 0.4 - 0.2));
+    i -= 16 + Math.random() * 50;
   }
   for (let j = 200; j > -canvas.height; ) {
-    foliages.push(new Foliage(400 + Math.random() * 10, j, 3.14+Math.random() * 0.4 - 0.2, 1));
-    j -= 16 + Math.random() * 80;
+    foliages.push(new Foliage(400 + Math.random() * 20, j, 3.14+Math.random() * 0.4 - 0.2));
+    j -= 16 + Math.random() * 50;
   }
 
   function update(state, dT) {
