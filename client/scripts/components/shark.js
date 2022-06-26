@@ -109,6 +109,10 @@ function Shark() {
     return vx;
   }
 
+  function getHeading() {
+    return heading;
+  }
+
   function render(ctx) {
     const baseXfm = ctx.getTransform();
 
@@ -199,6 +203,7 @@ function Shark() {
     getVY,
     getMouthX,
     getMouthY,
+    getHeading,
   };
 };
 

@@ -18,9 +18,10 @@ function Fish(x, y, angle) {
     // Chomp physics
     const dx = state.shark.getMouthX() - x;
     const dy = state.shark.getMouthY() - y;
-    if (dx * dx + dy * dy < 400) {
+    if (dx * dx + dy * dy < 550) {
       eaten = true;
       bus.emit('bite', { x, y });
+      bus.emit('blood', { x, y, n: 3 });
     }
   }
 

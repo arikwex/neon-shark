@@ -2,24 +2,57 @@ import bus from '../bus.js';
 import Level from './level.js';
 import Shark from './shark.js';
 import Fish from './fish.js';
+import LineParticle from './line-particle.js';
+import CircleParticle from './circle-particle.js';
 
 const GameEngine = () => {
   const state = {
     level: new Level(),
     shark: new Shark(),
     fishes: [],
+    particles: [],
   };
 
   state.fishes.push(new Fish(0, -300, 0));
   state.fishes.push(new Fish(-100, -400, 0));
   state.fishes.push(new Fish(100, -300, 0));
 
+  function initialize() {
+    bus.on('bite', ({x, y}) => {
+      const baseHeading = state.shark.getHeading();
+      for (let i = -2; i <= 2; i++) {
+        const px = x;
+        const py = y;
+        const vx = Math.sin(baseHeading + i) * (100 + Math.random() * 200);
+        const vy = -Math.cos(baseHeading + i) * (100 + Math.random() * 200);
+        const duration = Math.random() * 0.4 + 0.1;
+        state.particles.push(new LineParticle(px, py, vx, vy, {r: 250, g: 240, b: 230}, duration));
+      }
+    });
+    bus.on('blood', ({x, y, n}) => {
+      for (let i = 0; i < n; i++) {
+        const px = x;
+        const py = y;
+        const vx = (Math.random() - 0.5) * 120;
+        const vy = (Math.random() - 0.5) * 120;
+        const duration = Math.random() * 1.0 + 0.6;
+        state.particles.push(new CircleParticle(px, py, vx, vy, 10, {r: 250, g: 40, b: 40, a: 0.2}, duration));
+      }
+    });
+  }
+
+  function cleanup() {
+    bus.off('bite');
+  }
+
   function update(dT) {
     state.shark.update(state, dT);
     state.level.update(state, dT);
     state.fishes.forEach((f) => f.update(state, dT));
+    state.particles.forEach((p) => p.update(state, dT));
 
     filterRemove(state.fishes);
+    filterRemove(state.particles);
   }
 
   function filterRemove(arr) {
@@ -35,6 +68,8 @@ const GameEngine = () => {
   return {
     state,
     update,
+    initialize,
+    cleanup,
   };
 };
 

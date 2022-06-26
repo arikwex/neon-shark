@@ -12,6 +12,7 @@ function render(gameEngine) {
 
   state.fishes.forEach((f) => f.render(ctx));
   state.shark.render(ctx);
+  state.particles.forEach((p) => p.render(ctx));
   state.level.render(ctx);
 
   ctx.setTransform(xfm);

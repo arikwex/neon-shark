@@ -10,11 +10,13 @@ let lastFrameTime = Date.now();
 function initialize() {
   lastFrameTime = Date.now();
   gameEngine = GameEngine();
+  gameEngine.initialize();
   animate();
 }
 
 function cleanup() {
   window.cancelAnimationFrame(requestAnimate);
+  gameEngine?.cleanup();
   gameEngine = null;
 }
 
