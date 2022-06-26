@@ -10,15 +10,30 @@ function Boatman(x, y, angle) {
   }
   let patrolTime = 0;
   let aimPrep = 0;
+  let lockedAim = 0;
+  let quickness = 0.4;
 
   function update(state, dT) {
     const dax = state.shark.getX() - x;
     const day = state.shark.getY() - y;
     const d2 = dax * dax + day * day;
+    const vx = state.shark.getVX();
+    const vy = state.shark.getVY();
     let targetAim = 0;
 
-    if (d2 > 2400) {
-      targetAim = Math.atan2(day, dax);
+    if (d2 > 4000 && Math.abs(day) < 750) {
+      const d1 = Math.sqrt(d2);
+      if (aimPrep < 2.4) {
+        targetAim = Math.atan2(day + vy * d1 * 0.001, dax + vx * d1 * 0.001);
+        lockedAim = targetAim;
+      } else {
+        targetAim = lockedAim;
+      }
+      aimPrep += dT;
+      if (aimPrep > 2.6 + quickness) {
+        aimPrep = -1;
+        bus.emit('harpoon', { x: x + Math.cos(lockedAim) * 40, y: y + Math.sin(lockedAim) * 40, aim: lockedAim });
+      }
     } else {
       targetAim = aim + patrolDirection * dT;
       patrolTime += dT;
@@ -26,6 +41,7 @@ function Boatman(x, y, angle) {
         patrolTime = -Math.random() * 2;
         patrolDirection *= - 1;
       }
+      aimPrep = 0;
     }
 
     const dAim = turn(targetAim, aim, 7);
@@ -76,6 +92,7 @@ function Boatman(x, y, angle) {
     ctx.strokeRect(-20, 80, 40, 30);
 
     // Man
+    ctx.rotate(-angle);
     ctx.fillStyle ='#111';
     ctx.strokeStyle ='#111';
     ctx.lineWidth = 8;
@@ -104,6 +121,34 @@ function Boatman(x, y, angle) {
     ctx.stroke();
     ctx.fillStyle ='#555';
     ctx.fillRect(20, -7, 40, 14);
+
+    // Aim prep
+    if (aimPrep > 1.0 && aimPrep < 2.4 + quickness) {
+      ctx.setLineDash([]);
+      ctx.strokeStyle = `rgba(255,100, 100,${aimPrep * 0.3})`;
+      ctx.lineWidth = 30 * Math.exp(-(aimPrep - 1) * 2.5);
+      ctx.beginPath();
+      ctx.moveTo(80, 0);
+      ctx.lineTo(80 + 1000, 0);
+      ctx.stroke();
+      ctx.strokeStyle = `rgba(255,0,0,${aimPrep - 1})`;
+      ctx.lineWidth = 2;
+      ctx.lineDashOffset = -aimPrep * 60;
+      ctx.setLineDash([5, 15]);
+      ctx.beginPath();
+      ctx.moveTo(80, 0);
+      ctx.lineTo(80 + 1000, 0);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    } else if (aimPrep > 2.4 + quickness) {
+      ctx.setLineDash([]);
+      ctx.strokeStyle = `rgba(255,30,30,${0.4 - (aimPrep - 2.4 - quickness) * 2})`;
+      ctx.lineWidth = 40 * (1 - Math.exp(-(aimPrep - 2.4 - quickness) * 9.5));
+      ctx.beginPath();
+      ctx.moveTo(80, 0);
+      ctx.lineTo(80 + 1000, 0);
+      ctx.stroke();
+    }
 
     ctx.setTransform(baseXfm);
   }

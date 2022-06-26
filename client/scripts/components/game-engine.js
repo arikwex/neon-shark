@@ -4,6 +4,7 @@ import Level from './level.js';
 import Stats from './stats.js';
 import Shark from './shark.js';
 import Fish from './fish.js';
+import Harpoon from './harpoon.js';
 import Boatman from './boatman.js';
 import LineParticle from './line-particle.js';
 import CircleParticle from './circle-particle.js';
@@ -15,10 +16,11 @@ const GameEngine = () => {
     shark: new Shark(),
     fishes: [],
     boats: [],
+    harpoons: [],
     particles: [],
   };
 
-  state.boats.push(new Boatman(0, -300, 0.2));
+  state.boats.push(new Boatman(0, -400, 0.2));
 
   function initialize() {
     bus.on('feed', ({n}) => {
@@ -60,11 +62,16 @@ const GameEngine = () => {
         state.fishes.push(new Fish(x + dx, y + dy, dir + (Math.random() - 0.5) * 0.1));
       }
     });
+
+    bus.on('harpoon', ({x, y, aim}) => {
+      state.harpoons.push(new Harpoon(x, y, aim));
+    });
   }
 
   function cleanup() {
     bus.off('bite');
     bus.off('blood');
+    bus.off('spawn:fish');
   }
 
   function update(dT) {
@@ -72,10 +79,12 @@ const GameEngine = () => {
     state.level.update(state, dT);
     state.fishes.forEach((f) => f.update(state, dT));
     state.boats.forEach((b) => b.update(state, dT));
+    state.harpoons.forEach((h) => h.update(state, dT));
     state.particles.forEach((p) => p.update(state, dT));
 
     filterRemove(state.fishes);
     filterRemove(state.boats);
+    filterRemove(state.harpoons);
     filterRemove(state.particles);
   }
 

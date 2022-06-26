@@ -57,6 +57,18 @@ function Fish(x, y, angle) {
       remove = true;
     }
 
+    // Harpoon collision check
+    for (let i = 0; i < state.harpoons.length; i++) {
+      const harpoon = state.harpoons[i];
+      const dx = harpoon.getX() - x;
+      const dy = harpoon.getY() - y;
+      if (dx * dx + dy * dy < 700) {
+        bus.emit('blood', { x, y, n: 3 });
+        remove = true;
+        break;
+      }
+    }
+
     // Scared behavior
     if (scared > 0) {
       scared -= dT;
@@ -90,6 +102,14 @@ function Fish(x, y, angle) {
     ctx.setTransform(baseXfm);
   }
 
+  function getX() {
+    return x;
+  }
+
+  function getY() {
+    return y;
+  }
+
   function onBlood() {
     scared = 1 + Math.random() * 1.5;
   }
@@ -105,6 +125,8 @@ function Fish(x, y, angle) {
     update,
     render,
     shouldRemove,
+    getX,
+    getY,
   };
 };
 

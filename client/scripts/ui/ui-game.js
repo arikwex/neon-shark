@@ -23,6 +23,7 @@ function render(gameEngine) {
   state.particles.forEach((p) => p.render(ctx));
   state.level.render(ctx);
   state.boats.forEach((b) => b.render(ctx));
+  state.harpoons.forEach((h) => h.render(ctx));
 
   ctx.setTransform(xfm);
 
