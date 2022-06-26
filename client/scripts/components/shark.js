@@ -11,14 +11,14 @@ function Shark() {
   let vy = 0;
   let omega = 0;
   let heading = 0;
-  let arc = 0;
+  let moveArc = 0;
   let anim = 0;
 
   function update(dT) {
     let tx = 0;
     let ty = 0;
-    const MAX_FORCE = 600;
-    const MAX_TURN = 1 * MAX_FORCE / 600;
+    const MAX_FORCE = 800;
+    const MAX_TURN = 1.5 * MAX_FORCE / 800;
     if (controllerManager.getUp()) { ty = -MAX_FORCE; }
     if (controllerManager.getDown()) { ty = MAX_FORCE; }
     if (controllerManager.getLeft()) { tx = -MAX_FORCE; }
@@ -40,16 +40,16 @@ function Shark() {
     }
     const dH = turn(targetHeading, heading, 3.14);
     omega += (dH - omega) * 22.0 * MAX_TURN * dT;
-    omega = Math.max(Math.min(omega, MAX_TURN), -MAX_TURN);
+    omega = Math.max(Math.min(omega, 0.7 * MAX_TURN), -0.7 * MAX_TURN);
     heading += omega * 5.0 * MAX_TURN * dT;
-    arc += (-omega - arc) * 5.0 * MAX_TURN * dT;
+    moveArc += (-omega - moveArc) * 5.0 * MAX_TURN * dT;
 
-    vx -= vx * 3.0 * dT;
-    vy -= vy * 3.0 * dT;
+    vx -= vx * 2.0 * dT;
+    vy -= vy * 2.0 * dT;
 
-    x += vx * dT * 0.5 + Math.sin(heading) * speed * dT;
-    y += vy * dT * 0.5 - Math.cos(heading) * speed * dT;
-    anim += speed * dT / 50.0 + 0.2 * dT + Math.abs(omega) * dT;
+    x += vx * dT * 0.25 + Math.sin(heading) * speed * dT * 0.75;
+    y += vy * dT * 0.25 - Math.cos(heading) * speed * dT * 0.75;
+    anim += speed * dT / 75.0 + 0.2 * dT + Math.abs(omega) * dT;
   }
 
   function turn(a1, a2, maxRate) {
@@ -66,6 +66,7 @@ function Shark() {
     ctx.scale(0.75, 0.75);
     ctx.fillStyle = SKIN_COLOR;
 
+    const arc = moveArc * 0.9;
     const xfm = ctx.getTransform();
 
     // Upper Torso
