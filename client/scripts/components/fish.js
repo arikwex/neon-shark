@@ -1,16 +1,27 @@
 import { canvas } from '../ui/canvas.js';
+import bus from '../bus.js';
 
 const SKIN_COLOR = '#d93';
 
 function Fish(x, y, angle) {
   let anim = 0;
+  let eaten = false;
 
   function update(state, dT) {
+    // Motion
     const speed = 60;
     x += Math.sin(angle) * dT * speed;
     y -= Math.cos(angle) * dT * speed;
     angle += 1.0 * dT;
     anim += 6.0 * dT;
+
+    // Chomp physics
+    const dx = state.shark.getMouthX() - x;
+    const dy = state.shark.getMouthY() - y;
+    if (dx * dx + dy * dy < 400) {
+      eaten = true;
+      bus.emit('bite', { x, y });
+    }
   }
 
   function render(ctx) {
@@ -39,9 +50,14 @@ function Fish(x, y, angle) {
     ctx.setTransform(baseXfm);
   }
 
+  function shouldRemove() {
+    return eaten;
+  }
+
   return {
     update,
     render,
+    shouldRemove,
   };
 };
 

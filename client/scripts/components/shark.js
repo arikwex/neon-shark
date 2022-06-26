@@ -93,6 +93,14 @@ function Shark() {
     return x;
   }
 
+  function getMouthX() {
+    return x + Math.sin(heading) * 20;
+  }
+
+  function getMouthY() {
+    return y - Math.cos(heading) * 20;
+  }
+
   function getVY() {
     return vy;
   }
@@ -189,6 +197,8 @@ function Shark() {
     getY,
     getVX,
     getVY,
+    getMouthX,
+    getMouthY,
   };
 };
 
