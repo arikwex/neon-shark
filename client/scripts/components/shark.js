@@ -46,10 +46,12 @@ function Shark() {
 
     vx -= vx * 2.0 * dT;
     vy -= vy * 2.0 * dT;
+    const speed2 = Math.sqrt(vx * vx + vy * vy);
+    const dS = Math.max(speed2 - speed, 0);
 
     x += vx * dT * 0.25 + Math.sin(heading) * speed * dT * 0.75;
     y += vy * dT * 0.25 - Math.cos(heading) * speed * dT * 0.75;
-    anim += speed * dT / 75.0 + 0.2 * dT + Math.abs(omega) * dT;
+    anim += (speed * 0.4 + dS * 40.0) * dT / 75.0 + 0.2 * dT + Math.abs(omega) * dT;
   }
 
   function turn(a1, a2, maxRate) {

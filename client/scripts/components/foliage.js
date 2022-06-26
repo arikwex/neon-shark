@@ -47,7 +47,7 @@ function Foliage(x, y, baseAngle, levelMap, getProgress) {
     const dx = state.shark.getX() - x;
     const dy = state.shark.getY() - y;
     const d2 = dx * dx + dy * dy;
-    const touchForce = 45 * (state.shark.getVX() * px + state.shark.getVY() * py) * dT / (5 + d2 * 0.005);
+    const touchForce = 45 * (state.shark.getVX() * px + state.shark.getVY() * py) * dT / (10 + d2 * 0.004);
 
     a = Date.now() * 0.001;
     const turbulence = Math.cos(x * 0.01 + y * 0.02 + a) + Math.sin(y * 0.01 + a);
