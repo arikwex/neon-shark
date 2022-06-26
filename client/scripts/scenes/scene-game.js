@@ -20,7 +20,7 @@ function cleanup() {
 
 function animate() {
   currentFrameTime = Date.now();
-  const dT = Math.min((currentFrameTime - lastFrameTime) / 1000, 50)
+  const dT = Math.min((currentFrameTime - lastFrameTime) / 1000, 0.3);
 
   gameEngine.update(dT);
   ui.render(gameEngine);

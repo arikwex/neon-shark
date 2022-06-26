@@ -63,6 +63,18 @@ function Shark() {
     return y;
   }
 
+  function getX() {
+    return x;
+  }
+
+  function getVY() {
+    return vy;
+  }
+
+  function getVX() {
+    return vx;
+  }
+
   function render(ctx) {
     ctx.save();
     ctx.translate(x, y);
@@ -146,7 +158,10 @@ function Shark() {
   return {
     update,
     render,
+    getX,
     getY,
+    getVX,
+    getVY,
   };
 };
 
