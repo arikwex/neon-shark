@@ -28,6 +28,7 @@ const GameEngine = () => {
         const duration = Math.random() * 0.4 + 0.1;
         state.particles.push(new LineParticle(px, py, vx, vy, {r: 250, g: 240, b: 230}, duration));
       }
+      state.level.triggerShake(0.5);
     });
     bus.on('blood', ({x, y, n}) => {
       for (let i = 0; i < n; i++) {
@@ -43,6 +44,7 @@ const GameEngine = () => {
 
   function cleanup() {
     bus.off('bite');
+    bus.off('blood');
   }
 
   function update(dT) {

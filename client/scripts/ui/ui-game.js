@@ -8,8 +8,16 @@ function render(gameEngine) {
 
   const state = gameEngine.state;
   const xfm = ctx.getTransform();
+
+  // Camera baseline
   ctx.translate(canvas.width / 2, canvas.height - state.level.getProgress());
 
+  // Camera shake
+  const a = state.level.getShakeAmount();
+  ctx.translate(state.level.getShakeX(a), state.level.getShakeY(a));
+  ctx.rotate(state.level.getShakeRotation());
+
+  // Game elements
   state.fishes.forEach((f) => f.render(ctx));
   state.shark.render(ctx);
   state.particles.forEach((p) => p.render(ctx));

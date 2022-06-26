@@ -2,6 +2,8 @@ import { canvas } from '../ui/canvas.js';
 import Foliage from './foliage.js';
 
 function Level(engineState) {
+  let shake = 0;
+  let shakeAxis = 0;
   let progress = canvas.height * 0.2;
   const foliages = [];
 
@@ -10,6 +12,33 @@ function Level(engineState) {
     progress = Math.min(newProgress, progress);
 
     foliages.forEach((f) => f.update(state, dT));
+
+    if (shake > 0) {
+      shake -= dT;
+    } else {
+      shake = 0;
+    }
+  }
+
+  function triggerShake(s) {
+    shake = s;
+    shakeAxis = (Math.random() - 0.5) * 0.05;
+  }
+
+  function getShakeAmount() {
+    return 15 * shake * (Math.cos(shake * 40) + Math.random() * 0.35);
+  }
+
+  function getShakeX(a) {
+    return Math.cos(shakeAxis) * a;
+  }
+
+  function getShakeY(a) {
+    return Math.sin(shakeAxis) * a;
+  }
+
+  function getShakeRotation() {
+    return shakeAxis * shake;
   }
 
   function levelWidth(y) {
@@ -95,6 +124,11 @@ function Level(engineState) {
     getProgress,
     levelMapLeft,
     levelMapRight,
+    getShakeAmount,
+    getShakeX,
+    getShakeY,
+    getShakeRotation,
+    triggerShake,
   };
 }
 
