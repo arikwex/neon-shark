@@ -1,3 +1,5 @@
+const FILL = '#eee';
+
 export default {
   // Stage 0
   'heal': {
@@ -6,27 +8,23 @@ export default {
     fish: 10,
     hearts: 0,
     time: 0,
+    description: ['Digest 10 fish from your', 'full belly to regain a', 'health point instantly.'],
     icon: (ctx) => {
-      ctx.fillStyle = '#444';
+      ctx.fillStyle = FILL;
       ctx.fillRect(-20, -6, 40, 12);
       ctx.fillRect(-6, -20, 12, 40);
     }
   },
   'stasis': {
     title: 'Stasis',
-    type: 0,
+    type: 1,
     fish: 0,
     hearts: 0,
     time: 1,
+    description: ['Rest briefly to recover a', 'health point. You will be', 'exposed while in stasis.'],
     icon: (ctx) => {
-      ctx.strokeStyle = '#444';
+      ctx.strokeStyle = FILL;
       ctx.lineWidth = 6;
-      // ctx.beginPath();
-      // ctx.arc(0, 0, 20, 0, Math.PI * 2);
-      // ctx.stroke();
-      // ctx.beginPath();
-      // ctx.arc(0, 0, 10, 0, Math.PI * 2);
-      // ctx.stroke();
       ctx.strokeRect(-20, -20, 40, 40);
       ctx.strokeRect(-10, -10, 20, 20);
     }
@@ -38,6 +36,7 @@ export default {
     fish: 4,
     hearts: 0,
     time: 0,
+    description: [''],
     icon: (ctx) => {
 
     }
@@ -48,6 +47,7 @@ export default {
     fish: 0,
     hearts: 1,
     time: 0,
+    description: [''],
     icon: (ctx) => {
     }
   }

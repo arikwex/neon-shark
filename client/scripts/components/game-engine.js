@@ -1,6 +1,7 @@
 import bus from '../bus.js';
 import { canvas } from '../ui/canvas.js';
 import Level from './level.js';
+import Evolve from './evolve.js';
 import Stats from './stats.js';
 import Shark from './shark.js';
 import Fish from './fish.js';
@@ -12,6 +13,7 @@ import RippleParticle from './ripple-particle.js';
 
 const GameEngine = () => {
   const state = {
+    evolve: new Evolve(),
     stats: new Stats(),
     level: new Level(),
     shark: new Shark(),
@@ -21,7 +23,20 @@ const GameEngine = () => {
     particles: [],
   };
 
+  // setTimeout(() => bus.emit('evolve'), 500);
+
   function initialize() {
+    bus.on('evolve', () => {
+      state.evolve.activate(state.stats.getAbilities().length);
+    });
+
+    bus.on('ability:gain', (ability) => {
+      state.stats.addAbility(ability);
+    });
+
+    bus.on('control:left', () => { state.evolve.selectLeft(); });
+    bus.on('control:right', () => { state.evolve.selectRight(); });
+
     bus.on('feed', ({n}) => {
       state.stats.feed(n);
     });
@@ -84,6 +99,11 @@ const GameEngine = () => {
   }
 
   function cleanup() {
+    bus.off('control:left');
+    bus.off('control:right');
+    bus.off('evolve');
+    bus.off('ability:gain');
+
     bus.off('bite');
     bus.off('feed');
     bus.off('blood');
@@ -94,17 +114,22 @@ const GameEngine = () => {
   }
 
   function update(dT) {
-    state.shark.update(state, dT);
-    state.level.update(state, dT);
-    state.fishes.forEach((f) => f.update(state, dT));
-    state.boats.forEach((b) => b.update(state, dT));
-    state.harpoons.forEach((h) => h.update(state, dT));
-    state.particles.forEach((p) => p.update(state, dT));
+    state.evolve.update(state, dT);
+    if (state.evolve.isActive()) {
+      // !!
+    } else {
+      state.shark.update(state, dT);
+      state.level.update(state, dT);
+      state.fishes.forEach((f) => f.update(state, dT));
+      state.boats.forEach((b) => b.update(state, dT));
+      state.harpoons.forEach((h) => h.update(state, dT));
+      state.particles.forEach((p) => p.update(state, dT));
 
-    filterRemove(state.fishes);
-    filterRemove(state.boats);
-    filterRemove(state.harpoons);
-    filterRemove(state.particles);
+      filterRemove(state.fishes);
+      filterRemove(state.boats);
+      filterRemove(state.harpoons);
+      filterRemove(state.particles);
+    }
   }
 
   function filterRemove(arr) {

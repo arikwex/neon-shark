@@ -6,6 +6,8 @@ function ControllerManager() {
   function initialize() {
     window.onkeydown = (evt) => {
       keymap[evt.key] = true;
+      if (evt.key == 'ArrowLeft') { bus.emit('control:left'); }
+      if (evt.key == 'ArrowRight') { bus.emit('control:right'); }
       bus.emit('any-key');
     };
 

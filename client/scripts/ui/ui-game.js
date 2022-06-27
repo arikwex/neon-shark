@@ -9,6 +9,7 @@ function render(gameEngine) {
   ctx.lineJoin = 'round';
 
   const state = gameEngine.state;
+  const isEvolve = state.evolve.isActive();
   const xfm = ctx.getTransform();
 
   // Camera baseline
@@ -30,10 +31,19 @@ function render(gameEngine) {
   ctx.setTransform(xfm);
 
   // ABILITY HUD
-  const abilities = state.stats.getAbilities();
-  const NUM_ABILITIES = abilities.length;
-  for (let i = 0; i < NUM_ABILITIES; i++) {
-    drawAbility(i, NUM_ABILITIES, abilities[i]);
+  if (!isEvolve) {
+    const abilities = state.stats.getAbilities();
+    const NUM_ABILITIES = abilities.length;
+    ctx.translate(0, canvas.height - 90);
+    for (let i = 0; i < NUM_ABILITIES; i++) {
+      drawAbility(i, NUM_ABILITIES, abilities[i], true);
+    }
+    ctx.setTransform(xfm);
+  }
+
+  // EVOLVE HUD
+  if (isEvolve) {
+    evolveMenu(state, xfm);
   }
 
   // HUD
@@ -89,16 +99,57 @@ function render(gameEngine) {
 
   ctx.setTransform(xfm);
 
-  // Blood mask
-  const bloodMask = state.level.getBloodMask();
-  if (bloodMask > 0) {
-    const alpha = bloodMask * bloodMask;
-    ctx.fillStyle = `rgba(255,0,0,${alpha})`;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  if (!isEvolve) {
+    // Blood mask
+    const bloodMask = state.level.getBloodMask();
+    if (bloodMask > 0) {
+      const alpha = bloodMask * bloodMask;
+      ctx.fillStyle = `rgba(255,0,0,${alpha})`;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
   }
 }
 
-function drawAbility(i, n, ability) {
+function evolveMenu(state, xfm) {
+  ctx.globalAlpha = state.evolve.getFade();
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Title of menu
+  ctx.fillStyle = '#eee';
+  ctx.textAlign = 'center';
+  ctx.font = '90px Jaldi';
+  ctx.fillText(`Level 1`, canvas.width / 2 , 100);
+
+  // Instinct vs. Cybernetics
+  ctx.font = '42px Jaldi';
+  ctx.fillStyle = '#e66';
+  ctx.fillText('INSTINCTS', canvas.width / 2 - 200, canvas.height / 2 - 100);
+  ctx.fillStyle = '#66e';
+  ctx.fillText('CYBERNETICS', canvas.width / 2 + 200, canvas.height / 2 - 100);
+
+  // Cards + Explanations
+  const options = state.evolve.getOptions();
+  ctx.setTransform(xfm);
+  ctx.translate(-200, canvas.height / 2);
+  drawExplanation(ABILITY_DATA[options[0]].description);
+  ctx.font = '28px Jaldi';
+  ctx.fillStyle = '#e66';
+  ctx.fillText('[Left Arrow Key]', canvas.width / 2, 240);
+  drawAbility(0, 1, options[0], false);
+
+  ctx.setTransform(xfm);
+  ctx.translate(200, canvas.height / 2);
+  drawExplanation(ABILITY_DATA[options[1]].description);
+  ctx.font = '28px Jaldi';
+  ctx.fillStyle = '#66e';
+  ctx.fillText('[Right Arrow Key]', canvas.width / 2, 240);
+  drawAbility(0, 1, options[1], false);
+
+  ctx.globalAlpha = 1;
+}
+
+function drawAbility(i, n, ability, showKey = false) {
   const xfm = ctx.getTransform();
   const data = ABILITY_DATA[ability];
   const fish = data.fish;
@@ -106,25 +157,20 @@ function drawAbility(i, n, ability) {
   const time = data.time;
 
   // CARD
-  ctx.translate(canvas.width / 2 + (- (n - 1) / 2 + i) * 120, canvas.height - 70);
+  ctx.translate(canvas.width / 2 + (- (n - 1) / 2 + i) * 120, 0);
   ctx.lineWidth = 5;
   if (data.type == 0) {
-    ctx.fillStyle = 'rgba(250,250,210,0.6)';
-    ctx.strokeStyle = 'rgba(170,170,140,0.6)';
+    ctx.fillStyle = 'rgba(150,120,120,0.6)';
+    ctx.strokeStyle = 'rgba(255,40,40,0.6)';
   } else {
-    ctx.fillStyle = 'rgba(190,190,250,0.6)';
-    ctx.strokeStyle = 'rgba(130,130,170,0.6)';
+    ctx.fillStyle = 'rgba(120,120,150,0.6)';
+    ctx.strokeStyle = 'rgba(40,40,255,0.6)';
   }
   ctx.fillRect(-50, -50, 100, 100);
   ctx.strokeRect(-50, -50, 100, 100);
 
   // ICON AND TEXT
-  if (data.type == 0) {
-    ctx.fillStyle = 'rgba(170,170,140,1)';
-  } else {
-    ctx.fillStyle = 'rgba(150,150,190,1)';
-  }
-  ctx.fillStyle = '#444';
+  ctx.fillStyle = '#eee';
   ctx.textAlign = 'center';
   ctx.font = '24px Jaldi';
   ctx.fillText(data.title, 0, 35);
@@ -132,9 +178,16 @@ function drawAbility(i, n, ability) {
   ctx.scale(0.8, 0.8);
   data.icon(ctx);
 
+  if (showKey) {
+    ctx.fillStyle = '#111';
+    ctx.textAlign = 'center';
+    ctx.font = '28px Jaldi';
+    ctx.fillText(`[ Q ]`, 0, 90);
+  }
+
   // HEART COST
   if (hearts == 1) {
-    ctx.fillStyle = '#f44';
+    ctx.fillStyle = '#eee';
     ctx.translate(0, -41);
     ctx.scale(0.8, 0.8);
     ctx.beginPath();
@@ -148,7 +201,7 @@ function drawAbility(i, n, ability) {
     ctx.fill();
   }
   if (fish > 0) {
-    ctx.fillStyle = '#d93';
+    ctx.fillStyle = '#eee';
     ctx.translate(-22, -41);
     ctx.textAlign = 'left';
     ctx.font = '24px Jaldi';
@@ -166,7 +219,7 @@ function drawAbility(i, n, ability) {
     ctx.fill();
   }
   if (time == 1) {
-    ctx.strokeStyle = '#44c';
+    ctx.strokeStyle = '#eee';
     ctx.translate(0, -41);
     ctx.lineWidth = 4;
     ctx.beginPath();
@@ -180,6 +233,15 @@ function drawAbility(i, n, ability) {
   }
 
   ctx.setTransform(xfm);
+}
+
+function drawExplanation(rows) {
+  ctx.fillStyle = '#ccc';
+  ctx.font = '24px Jaldi';
+  ctx.textAlign = 'center';
+  for (let i = 0; i < rows.length; i++) {
+    ctx.fillText(rows[i], canvas.width / 2, 110 + i * 30);
+  }
 }
 
 export default {
