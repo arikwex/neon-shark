@@ -36,7 +36,7 @@ export default {
     fish: 0,
     hearts: 1,
     time: 0,
-    description: ['Enter a feeding frenzy that', 'increased speed and agility', 'for a short period.'],
+    description: ['Enter a feeding frenzy that', 'increases speed and jaw strength', 'for a short period.'],
     icon: (ctx) => {
       ctx.fillStyle = FILL;
       ctx.beginPath();

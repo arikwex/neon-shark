@@ -118,6 +118,9 @@ function Shark() {
       if (mouthContentTimer > 0) {
         mouthContentTimer -= dT;
         mouthContentTicker += dT;
+        if (inFrenzy) {
+          mouthContentTimer -= dT * 2;
+        }
         if (mouthContentTicker > 0.5) {
           mouthContentTicker = 0.0;
           bus.emit('shark:mouth-full');
@@ -125,6 +128,9 @@ function Shark() {
       } else {
         bus.emit('shark:mouth-full');
         mouthContentTimer = 0;
+        if (inFrenzy) {
+          mouthContents.crush();
+        }
         mouthContents.release(vx * 2 + Math.sin(heading) * 130, vy * 2 - Math.cos(heading) * 130);
         mouthContents = null;
       }
