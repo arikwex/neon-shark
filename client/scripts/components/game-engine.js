@@ -36,6 +36,10 @@ const GameEngine = () => {
 
     bus.on('control:left', () => { state.evolve.selectLeft(); });
     bus.on('control:right', () => { state.evolve.selectRight(); });
+    bus.on('control:q', () => { state.shark.useAbility(state, 0); });
+    bus.on('control:w', () => { state.shark.useAbility(state, 1); });
+    bus.on('control:e', () => { state.shark.useAbility(state, 2); });
+    bus.on('control:r', () => { state.shark.useAbility(state, 3); });
 
     bus.on('feed', ({n}) => {
       state.stats.feed(n);
@@ -95,6 +99,48 @@ const GameEngine = () => {
 
     bus.on('harpoon', ({x, y, aim}) => {
       state.harpoons.push(new Harpoon(x, y, aim));
+    });
+
+    bus.on('ability:heal', () => {
+      const baseHeading = state.shark.getHeading();
+      const x = state.shark.getMouthX();
+      const y = state.shark.getMouthY();
+      for (let i = -5; i <= 5; i++) {
+        const px = x;
+        const py = y;
+        const vx = Math.sin(baseHeading + i) * (200 + Math.random() * 300);
+        const vy = -Math.cos(baseHeading + i) * (200 + Math.random() * 300);
+        const duration = Math.random() * 0.4 + 0.1;
+        state.particles.push(new LineParticle(px, py, vx, vy, {r: 250, g: 240, b: 230}, duration));
+      }
+      for (let i = -5; i <= 5; i++) {
+        const px = x + (Math.random() - 0.5) * 20;
+        const py = y + (Math.random() - 0.5) * 30;
+        state.particles.push(new RippleParticle(px, py, i * 1.2 + Math.random() - 0.5, 20, 1.4));
+      }
+      state.level.triggerShake(0.4);
+      state.stats.feed(-10);
+      state.stats.addHealth(1);
+    });
+
+    bus.on('ability:stasis', () => {
+      state.shark.beginStasis();
+    });
+
+    bus.on('ability:stasis-end', () => {
+      const baseHeading = state.shark.getHeading();
+      const x = state.shark.getMouthX();
+      const y = state.shark.getMouthY();
+      for (let i = -5; i <= 5; i++) {
+        const px = x;
+        const py = y;
+        const vx = Math.sin(baseHeading + i) * (200 + Math.random() * 300);
+        const vy = -Math.cos(baseHeading + i) * (200 + Math.random() * 300);
+        const duration = Math.random() * 0.4 + 0.1;
+        state.particles.push(new LineParticle(px, py, vx, vy, {r: 250, g: 240, b: 230}, duration));
+      }
+      state.level.triggerShake(0.4);
+      state.stats.addHealth(1);
     });
   }
 

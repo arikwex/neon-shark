@@ -10,7 +10,8 @@ function Fish(x, y, angle) {
   let remove = false;
   let scared = 0;
 
-  bus.on('blood', onBlood);
+  bus.on('blood', onScare);
+  bus.on('ability:stasis-end', onScare);
 
   function update(state, dT) {
     // Motion
@@ -110,13 +111,14 @@ function Fish(x, y, angle) {
     return y;
   }
 
-  function onBlood() {
+  function onScare() {
     scared = 1 + Math.random() * 1.5;
   }
 
   function shouldRemove() {
     if (remove) {
-      bus.off('blood', onBlood);
+      bus.off('blood', onScare);
+      bus.off('ability:stasis-end', onScare);
     }
     return remove;
   }

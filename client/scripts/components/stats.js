@@ -9,11 +9,13 @@ const rankUps = {
 };
 
 function Stats() {
-  let health = 3;
+  let health = 1;
   let maxHealth = 3;
   let fish = 0;
   let fishForNextEvolution = rankUps[0];
-  let abilities = []; //[ABILITY.HEAL, ABILITY.STASIS, ABILITY.BITE, ABILITY.DASH];
+  let abilities = [ABILITY.HEAL, ABILITY.STASIS, ABILITY.BITE, ABILITY.DASH];
+  fish = 100;
+  fishForNextEvolution = 300;
 
   function feed(n) {
     fish += n;
@@ -27,6 +29,13 @@ function Stats() {
     health -= hp;
     if (health <= 0) {
       health = 0;
+    }
+  }
+
+  function addHealth(hp) {
+    health += hp;
+    if (health > maxHealth) {
+      health = maxHealth;
     }
   }
 
@@ -59,6 +68,7 @@ function Stats() {
   return {
     feed,
     removeHealth,
+    addHealth,
     getHealth,
     getMaxHealth,
     getFish,

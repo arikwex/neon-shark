@@ -8,6 +8,10 @@ function ControllerManager() {
       keymap[evt.key] = true;
       if (evt.key == 'ArrowLeft') { bus.emit('control:left'); }
       if (evt.key == 'ArrowRight') { bus.emit('control:right'); }
+      if (evt.key == 'q') { bus.emit('control:q'); }
+      if (evt.key == 'w') { bus.emit('control:w'); }
+      if (evt.key == 'e') { bus.emit('control:e'); }
+      if (evt.key == 'r') { bus.emit('control:r'); }
       bus.emit('any-key');
     };
 

@@ -62,7 +62,7 @@ function Boatman(x, y, angle) {
         size: 20 + Math.random() * 20,
         direction: rippleDir,
         duration: 2,
-     });
+      });
       ripple = 0;
     }
 

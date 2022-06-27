@@ -1,4 +1,6 @@
+import bus from '../bus.js';
 import controllerManager from '../managers/controller-manager.js';
+import ABILITY from '../constants/abilities.js';
 
 const SKIN_COLOR = '#57a';
 const SW = 17;
@@ -16,16 +18,22 @@ function Shark() {
   let wince = 0;
   let winceDirection = 0;
 
+  // Abilities
+  let inStasis = false;
+  let statisTimer = 0;
+
   function update(state, dT) {
     // Controls
     let tx = 0;
     let ty = 0;
     const MAX_FORCE = 800;
     const MAX_TURN = 1.5 * MAX_FORCE / 800;
-    if (controllerManager.getUp()) { ty = -MAX_FORCE; }
-    if (controllerManager.getDown()) { ty = MAX_FORCE; }
-    if (controllerManager.getLeft()) { tx = -MAX_FORCE; }
-    if (controllerManager.getRight()) { tx = MAX_FORCE; }
+    if (!inStasis) {
+      if (controllerManager.getUp()) { ty = -MAX_FORCE; }
+      if (controllerManager.getDown()) { ty = MAX_FORCE; }
+      if (controllerManager.getLeft()) { tx = -MAX_FORCE; }
+      if (controllerManager.getRight()) { tx = MAX_FORCE; }
+    }
 
     // Motion limits
     const speed = Math.sqrt(vx * vx + vy * vy);
@@ -83,6 +91,24 @@ function Shark() {
     } else {
       wince = 0;
     }
+
+    // Abilities
+    if (inStasis) {
+      if (stasisTimer > 0) {
+        stasisTimer -= dT;
+        if (Math.random() > 0.7) {
+          bus.emit('ripple', {
+            x: x, y: y,
+            size: 20 + Math.random() * 20,
+            direction: Math.random() * 14,
+            duration: 2,
+          });
+        }
+      } else {
+        inStasis = false;
+        bus.emit('ability:stasis-end');
+      }
+    }
   }
 
   function turn(a1, a2, maxRate) {
@@ -128,7 +154,12 @@ function Shark() {
     ctx.scale(0.75, 0.75);
     ctx.fillStyle = SKIN_COLOR;
 
-    const arc = moveArc * 0.9 + winceDirection * wince * wince;
+    let arc = moveArc * 0.9 + winceDirection * wince * wince;
+    if (inStasis) {
+      const p = 3.5 - stasisTimer;
+      const stasisAlpha = Math.cos(p * p * 10) * 0.4 + 0.6;
+      ctx.fillStyle = `rgba(255,255,255,${stasisAlpha})`;
+    }
     const xfm = ctx.getTransform();
 
     // Upper Torso
@@ -211,6 +242,39 @@ function Shark() {
     }
   }
 
+  function useAbility(state, abilityIndex) {
+    const abilities = state.stats.getAbilities();
+    if (abilityIndex >= abilities.length) {
+      return;
+    }
+    const a = abilities[abilityIndex];
+    const fish = state.stats.getFish();
+    const hp = state.stats.getHealth();
+    const maxHp = state.stats.getMaxHealth();
+
+    if (a == ABILITY.HEAL) {
+      if (fish >= 10 && hp < maxHp) {
+        bus.emit('ability:heal');
+      }
+    }
+    else if (a == ABILITY.STASIS) {
+      if (!inStasis && hp < maxHp) {
+        bus.emit('ability:stasis');
+      }
+    }
+    else if (a == ABILITY.BITE) {
+      console.log('BITE');
+    }
+    else if (a == ABILITY.DASH) {
+      console.log('DASH');
+    }
+  }
+
+  function beginStasis() {
+    inStasis = true;
+    stasisTimer = 3.5;
+  }
+
   return {
     update,
     render,
@@ -222,6 +286,8 @@ function Shark() {
     getMouthX,
     getMouthY,
     getHeading,
+    useAbility,
+    beginStasis,
   };
 };
 
