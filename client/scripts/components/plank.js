@@ -11,6 +11,8 @@ function Plank(x, y, angle) {
   let vy = 0;
   let omega = 0;
 
+  bus.on('boom', onBoom);
+
   function update(state, dT) {
     // Chomp physics
     const mx = state.shark.getJawX();
@@ -87,6 +89,14 @@ function Plank(x, y, angle) {
     ctx.setTransform(baseXfm);
   }
 
+  function onBoom(obj) {
+    const dx = obj.x - x;
+    const dy = obj.y - y;
+    if (dx * dx + dy * dy < 250 * 250) {
+      remove = true;
+    }
+  }
+
   function getX() {
     return x;
   }
@@ -109,6 +119,9 @@ function Plank(x, y, angle) {
   }
 
   function shouldRemove() {
+    if (remove) {
+      bus.off('boom', onBoom);
+    }
     return remove;
   }
 

@@ -12,6 +12,8 @@ function DrownMan(x, y, angle, vx, vy) {
   let z = 0;
   let inAir = true;
 
+  bus.on('boom', onBoom);
+
   function update(state, dT) {
     anim += dT;
 
@@ -132,6 +134,15 @@ function DrownMan(x, y, angle, vx, vy) {
     ctx.setTransform(baseXfm);
   }
 
+  function onBoom(obj) {
+    const dx = obj.x - x;
+    const dy = obj.y - y;
+    if (dx * dx + dy * dy < 200 * 200) {
+      bus.emit('blood', {x, y, n: 30});
+      remove = true;
+    }
+  }
+
   function getX() {
     return x;
   }
@@ -155,6 +166,9 @@ function DrownMan(x, y, angle, vx, vy) {
   }
 
   function shouldRemove() {
+    if (remove) {
+      bus.off('boom', onBoom);
+    }
     return remove;
   }
 

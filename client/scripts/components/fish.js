@@ -11,6 +11,8 @@ function Fish(x, y, angle) {
   let scared = 0;
 
   bus.on('blood', onScare);
+  bus.on('boom', onScare);
+  bus.on('boom', onBoom);
   bus.on('ability:stasis-end', onScare);
 
   function update(state, dT) {
@@ -115,9 +117,20 @@ function Fish(x, y, angle) {
     scared = 1 + Math.random() * 1.5;
   }
 
+  function onBoom(obj) {
+    const dx = obj.x - x;
+    const dy = obj.y - y;
+    if (dx * dx + dy * dy < 350 * 350) {
+      remove = true;
+      bus.emit('blood', {x, y, n: 3});
+    }
+  }
+
   function shouldRemove() {
     if (remove) {
       bus.off('blood', onScare);
+      bus.off('boom', onScare);
+      bus.off('boom', onBoom);
       bus.off('ability:stasis-end', onScare);
     }
     return remove;

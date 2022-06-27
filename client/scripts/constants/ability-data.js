@@ -126,7 +126,7 @@ export default {
     fish: 0,
     hearts: 1,
     time: 0,
-    description: ['Fire a rocket that will explode', 'on first contact and destroy', 'anything it touches.'],
+    description: ['Fire a rocket that will destroy', 'anything in its explosion radius.'],
     icon: (ctx) => {
       ctx.fillStyle = FILL;
       ctx.lineWidth = 3;
