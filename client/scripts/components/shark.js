@@ -21,6 +21,7 @@ function Shark() {
   let mouthContents = null;
   let mouthContentTimer = 0;
   let mouthContentTicker = 0;
+  let deadDrip = 0;
 
   // Abilities
   let inStasis = false;
@@ -33,6 +34,18 @@ function Shark() {
   let bashTimer = 0;
 
   function update(state, dT) {
+    const isDead = state.stats.getHealth() == 0;
+
+    if (isDead) {
+      inStasis = false;
+      stasisTimer = 0;
+      deadDrip += dT;
+      if (deadDrip > 0.2) {
+        bus.emit('blood', {x,y,n:3});
+        deadDrip = 0;
+      }
+    }
+
     // Controls
     let tx = 0;
     let ty = 0;
@@ -44,7 +57,7 @@ function Shark() {
       MAX_FORCE -= 400;
     }
     const MAX_TURN = 1.5 * MAX_FORCE / 800;
-    if (!inStasis) {
+    if (!inStasis && !isDead) {
       if (controllerManager.getUp()) { ty = -MAX_FORCE; }
       if (controllerManager.getDown()) { ty = MAX_FORCE; }
       if (controllerManager.getLeft()) { tx = -MAX_FORCE; }
@@ -63,7 +76,7 @@ function Shark() {
     vx += tx * dT;
     vy += ty * dT;
 
-    if (inBash) {
+    if (inBash && !isDead) {
       vx += Math.sin(heading) * 1400 * dT;
       vy -= Math.cos(heading) * 1400 * dT;
     }

@@ -13,7 +13,7 @@ function Stats() {
   let maxHealth = 3;
   let fish = 0;
   let fishForNextEvolution = rankUps[0];
-  let abilities = [];//[ABILITY.HEAL, ABILITY.FRENZY, ABILITY.BASH];
+  let abilities = [];
 
   function feed(n) {
     fish += n;

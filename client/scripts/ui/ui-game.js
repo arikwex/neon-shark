@@ -118,6 +118,24 @@ function render(gameEngine) {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
   }
+
+  // GAME OVER TRUMPS ALL
+  const gameOver = gameEngine.getGameOverTimer();
+  if (gameOver > 0) {
+    const victory = gameEngine.isVictory();
+    ctx.fillStyle = `rgba(0, 0, 0, ${Math.min(gameOver, 0.75)})`;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.font = '80px Jaldi';
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center';
+    if (victory) {
+      ctx.fillStyle = '#5d5';
+      ctx.fillText('FREEDOM!!!', canvas.width / 2, canvas.height / 2);
+    } else {
+      ctx.fillStyle = '#f55';
+      ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2);
+    }
+  }
 }
 
 function evolveMenu(state, xfm) {

@@ -1,4 +1,5 @@
 import bus from '../bus.js';
+import { transition, SCENES } from '../scenes/scene-manager.js';
 import { canvas } from '../ui/canvas.js';
 import Level from './level.js';
 import Evolve from './evolve.js';
@@ -29,11 +30,20 @@ const GameEngine = () => {
     particles: [],
   };
 
-  // setTimeout(() => bus.emit('evolve'), 50);
+  let gameOverTimer = 0;
+  let freedom = false;
 
   function initialize() {
     bus.on('evolve', () => {
-      state.evolve.activate(state.stats.getAbilities().length);
+      if (freedom) {
+        return;
+      }
+      const level = state.stats.getAbilities().length;
+      if (level == 3) {
+        freedom = true;
+      } else {
+        state.evolve.activate(level);
+      }
     });
 
     bus.on('ability:gain', (ability) => {
@@ -52,6 +62,9 @@ const GameEngine = () => {
     });
 
     bus.on('shark:hit', () => {
+      if (freedom) {
+        return;
+      }
       state.stats.removeHealth(1);
       state.shark.hit();
       state.level.hit();
@@ -291,6 +304,14 @@ const GameEngine = () => {
   }
 
   function update(dT) {
+    if (state.stats.getHealth() == 0 || freedom) {
+      gameOverTimer += dT;
+      if (gameOverTimer > 4) {
+        transition(SCENES.MAIN_MENU);
+        return;
+      }
+    }
+
     state.evolve.update(state, dT);
     if (state.evolve.isActive()) {
       // !!
@@ -325,11 +346,21 @@ const GameEngine = () => {
     }
   }
 
+  function getGameOverTimer() {
+    return gameOverTimer;
+  }
+
+  function isVictory() {
+    return freedom;
+  }
+
   return {
     state,
     update,
     initialize,
     cleanup,
+    getGameOverTimer,
+    isVictory,
   };
 };
 

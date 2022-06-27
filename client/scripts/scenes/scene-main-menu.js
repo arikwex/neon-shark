@@ -5,7 +5,7 @@ import { transition, SCENES } from '../scenes/scene-manager.js';
 let requestAnimate = null;
 
 function initialize() {
-  bus.on('any-key', onAnyKey);
+  setTimeout(() => { bus.on('any-key', onAnyKey); }, 500);
   animate();
 }
 
