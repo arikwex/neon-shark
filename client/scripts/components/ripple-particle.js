@@ -13,7 +13,7 @@ function RippleParticle(x, y, aim, size, duration) {
 
   function render(ctx) {
     const alpha = Math.min(anim * 3, 1) * Math.max(1 - anim / duration, 0) * 0.7;
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 5;
     ctx.strokeStyle = `rgba(230, 240, 250, ${alpha})`;
     ctx.beginPath();
     ctx.arc(x, y, size, aim - 0.5, aim + 0.5);

@@ -28,7 +28,7 @@ function Level(engineState) {
 
     // Event spawner
     if (eventTicker > 500) {
-      if (Math.random() > 0.5) {
+      if (Math.random() > 0.75) {
         bus.emit('spawn:boatman');
       } else {
         bus.emit('spawn:fish');

@@ -21,8 +21,6 @@ const GameEngine = () => {
     particles: [],
   };
 
-  state.boats.push(new Boatman(0, -400, 0.2));
-
   function initialize() {
     bus.on('feed', ({n}) => {
       state.stats.feed(n);
