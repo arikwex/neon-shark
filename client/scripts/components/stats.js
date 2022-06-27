@@ -33,6 +33,7 @@ function Stats() {
   function addAbility(ability) {
     abilities.push(ability);
     fishForNextEvolution = rankUps[abilities.length];
+    fish = 0;
   }
 
   function getAbilities() {

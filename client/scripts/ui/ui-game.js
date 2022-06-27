@@ -2,6 +2,8 @@ import { ctx, canvas } from './canvas';
 import ABILITY from '../constants/abilities.js';
 import ABILITY_DATA from '../constants/ability-data.js';
 
+const abilityKeys = ['Q', 'W', 'E', 'R'];
+
 function render(gameEngine) {
   ctx.fillStyle = '#ace';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -13,12 +15,16 @@ function render(gameEngine) {
   const xfm = ctx.getTransform();
 
   // Camera baseline
-  ctx.rotate(state.level.getShakeRotation());
+  if (!isEvolve) {
+    ctx.rotate(state.level.getShakeRotation());
+  }
   ctx.translate(canvas.width / 2, canvas.height - state.level.getProgress());
 
   // Camera shake
-  const a = state.level.getShakeAmount();
-  ctx.translate(state.level.getShakeX(a), state.level.getShakeY(a));
+  if (!isEvolve) {
+    const a = state.level.getShakeAmount();
+    ctx.translate(state.level.getShakeX(a), state.level.getShakeY(a));
+  }
 
   // Game elements
   state.fishes.forEach((f) => f.render(ctx));
@@ -182,7 +188,7 @@ function drawAbility(i, n, ability, showKey = false) {
     ctx.fillStyle = '#111';
     ctx.textAlign = 'center';
     ctx.font = '28px Jaldi';
-    ctx.fillText(`[ Q ]`, 0, 90);
+    ctx.fillText(`[ ${abilityKeys[i]} ]`, 0, 90);
   }
 
   // HEART COST
