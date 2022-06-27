@@ -13,7 +13,7 @@ function Stats() {
   let maxHealth = 3;
   let fish = 0;
   let fishForNextEvolution = rankUps[0];
-  let abilities = [ABILITY.HEAL, ABILITY.IRON_JAW];
+  let abilities = [ABILITY.HEAL, ABILITY.BASH, ABILITY.ROCKET];
   fish = 100;
   fishForNextEvolution = 300;
 
@@ -43,6 +43,8 @@ function Stats() {
     abilities.push(ability);
     fishForNextEvolution = rankUps[abilities.length];
     fish = 0;
+    maxHealth += 1;
+    health += 1;
   }
 
   function getAbilities() {

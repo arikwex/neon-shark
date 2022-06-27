@@ -36,7 +36,7 @@ export default {
     fish: 0,
     hearts: 1,
     time: 0,
-    description: ['Increase move speed'],
+    description: ['Enter a feeding frenzy that', 'increased speed and agility', 'for a short period.'],
     icon: (ctx) => {
       ctx.fillStyle = FILL;
       ctx.beginPath();
@@ -82,7 +82,7 @@ export default {
     fish: 4,
     hearts: 0,
     time: 0,
-    description: ['Use your mechanical jaws to', 'crush large objects that previously', 'had to be spit out.'],
+    description: ['Use your mechanical jaws to', 'crush large objects that previously', 'could not be eaten.'],
     icon: (ctx) => {
       ctx.strokeStyle = FILL;
       ctx.lineWidth = 6;
@@ -94,6 +94,55 @@ export default {
       ctx.stroke();
       ctx.strokeRect(-5, 3, 30, 9);
       ctx.strokeRect(26, 13, 8, -20);
+    }
+  },
+  // Stage 2
+  'bash': {
+    title: 'Bash',
+    type: 0,
+    fish: 10,
+    hearts: 0,
+    time: 0,
+    description: ['Charge forward a short distance.', 'Bashing into a boat will', 'push the person off.'],
+    icon: (ctx) => {
+      ctx.strokeStyle = FILL;
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(-20, -20);
+      ctx.lineTo(-10, 0);
+      ctx.lineTo(-20, 20);
+      ctx.moveTo(0, -20);
+      ctx.lineTo(10, 0);
+      ctx.lineTo(0, 20);
+      ctx.moveTo(20, -20);
+      ctx.lineTo(30, 0);
+      ctx.lineTo(20, 20);
+      ctx.stroke();
+    }
+  },
+  'rocket': {
+    title: 'Rocket',
+    type: 1,
+    fish: 0,
+    hearts: 2,
+    time: 0,
+    description: ['Fire a rocket that will explode', 'on first contact and destroy', 'anything it touches.'],
+    icon: (ctx) => {
+      ctx.fillStyle = FILL;
+      ctx.lineWidth = 3;
+
+      ctx.fillRect(-10, -7, 50, 14);
+      ctx.fillRect(-15, -7, 20, -7);
+      ctx.fillRect(-15, 7, 20, 7);
+      ctx.beginPath();
+      ctx.arc(-20, 0, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(-30, 0, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(-37, 0, 2, 0, Math.PI * 2);
+      ctx.fill();
     }
   }
 };

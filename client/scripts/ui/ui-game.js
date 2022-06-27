@@ -207,6 +207,30 @@ function drawAbility(i, n, ability, showKey = false) {
     ctx.closePath();
     ctx.fill();
   }
+  if (hearts == 2) {
+    ctx.fillStyle = '#eee';
+    ctx.translate(-20, -41);
+    ctx.scale(0.8, 0.8);
+    ctx.beginPath();
+    ctx.moveTo(-20, 0);
+    ctx.lineTo(-10, -10);
+    ctx.lineTo(0, 0);
+    ctx.lineTo(10, -10);
+    ctx.lineTo(20, 0);
+    ctx.lineTo(0, 20);
+    ctx.closePath();
+    ctx.fill();
+    ctx.translate(50, 0);
+    ctx.beginPath();
+    ctx.moveTo(-20, 0);
+    ctx.lineTo(-10, -10);
+    ctx.lineTo(0, 0);
+    ctx.lineTo(10, -10);
+    ctx.lineTo(20, 0);
+    ctx.lineTo(0, 20);
+    ctx.closePath();
+    ctx.fill();
+  }
   if (fish > 0) {
     ctx.fillStyle = '#eee';
     ctx.translate(-22, -41);

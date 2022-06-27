@@ -4,4 +4,7 @@ export default {
 
   FRENZY: 'frenzy',
   IRON_JAW: 'iron-jaw',
+
+  BASH: 'bash',
+  ROCKET: 'rocket',
 };
