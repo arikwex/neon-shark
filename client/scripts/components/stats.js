@@ -6,7 +6,7 @@ function Stats() {
   let maxHealth = 3;
   let fish = 0;
   let fishForNextEvolution = 4;
-  let abilities = [ABILITY.HEAL, ABILITY.BITE, ABILITY.DASH];
+  let abilities = [ABILITY.HEAL, ABILITY.STASIS, ABILITY.BITE, ABILITY.DASH];
 
   function feed(n) {
     fish += n;

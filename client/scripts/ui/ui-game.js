@@ -103,6 +103,7 @@ function drawAbility(i, n, ability) {
   const data = ABILITY_DATA[ability];
   const fish = data.fish;
   const hearts = data.hearts;
+  const time = data.time;
 
   // CARD
   ctx.translate(canvas.width / 2 + (- (n - 1) / 2 + i) * 120, canvas.height - 70);
@@ -127,13 +128,14 @@ function drawAbility(i, n, ability) {
   ctx.textAlign = 'center';
   ctx.font = '24px Jaldi';
   ctx.fillText(data.title, 0, 35);
+  ctx.translate(0, -3);
   ctx.scale(0.8, 0.8);
   data.icon(ctx);
 
   // HEART COST
   if (hearts == 1) {
     ctx.fillStyle = '#f44';
-    ctx.translate(0, -44);
+    ctx.translate(0, -41);
     ctx.scale(0.8, 0.8);
     ctx.beginPath();
     ctx.moveTo(-20, 0);
@@ -147,7 +149,7 @@ function drawAbility(i, n, ability) {
   }
   if (fish > 0) {
     ctx.fillStyle = '#d93';
-    ctx.translate(-22, -44);
+    ctx.translate(-22, -41);
     ctx.textAlign = 'left';
     ctx.font = '24px Jaldi';
     ctx.fillText(`x ${fish}`, 26, 1);
@@ -162,6 +164,19 @@ function drawAbility(i, n, ability) {
     ctx.lineTo(-20, 15);
     ctx.closePath();
     ctx.fill();
+  }
+  if (time == 1) {
+    ctx.strokeStyle = '#44c';
+    ctx.translate(0, -41);
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(0, -10);
+    ctx.lineTo(0, 0);
+    ctx.lineTo(4, -1);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(0, 0, 10, 0, Math.PI * 2);
+    ctx.stroke();
   }
 
   ctx.setTransform(xfm);
