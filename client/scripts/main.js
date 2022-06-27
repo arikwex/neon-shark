@@ -5,5 +5,5 @@ import ControllerManager from './managers/controller-manager.js';
 (() => {
   AudioManager.initialize();
   ControllerManager.initialize();
-  transition(SCENES.GAME);
+  transition(SCENES.MAIN_MENU);
 })();

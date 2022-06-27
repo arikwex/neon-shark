@@ -30,6 +30,7 @@ const GameEngine = () => {
     particles: [],
   };
 
+  let fadeIn = 0;
   let gameOverTimer = 0;
   let freedom = false;
 
@@ -311,6 +312,9 @@ const GameEngine = () => {
         return;
       }
     }
+    if (fadeIn < 1) {
+      fadeIn += dT;
+    }
 
     state.evolve.update(state, dT);
     if (state.evolve.isActive()) {
@@ -354,6 +358,10 @@ const GameEngine = () => {
     return freedom;
   }
 
+  function getFadeIn() {
+    return fadeIn;
+  }
+
   return {
     state,
     update,
@@ -361,6 +369,7 @@ const GameEngine = () => {
     cleanup,
     getGameOverTimer,
     isVictory,
+    getFadeIn,
   };
 };
 

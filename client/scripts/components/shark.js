@@ -22,6 +22,7 @@ function Shark() {
   let mouthContentTimer = 0;
   let mouthContentTicker = 0;
   let deadDrip = 0;
+  let canMove = true;
 
   // Abilities
   let inStasis = false;
@@ -57,7 +58,7 @@ function Shark() {
       MAX_FORCE -= 400;
     }
     const MAX_TURN = 1.5 * MAX_FORCE / 800;
-    if (!inStasis && !isDead) {
+    if (!inStasis && !isDead && canMove) {
       if (controllerManager.getUp()) { ty = -MAX_FORCE; }
       if (controllerManager.getDown()) { ty = MAX_FORCE; }
       if (controllerManager.getLeft()) { tx = -MAX_FORCE; }
@@ -453,6 +454,10 @@ function Shark() {
     bashTimer = 0.7;
   }
 
+  function setCanMove(v) {
+    canMove = v;
+  }
+
   return {
     update,
     render,
@@ -476,6 +481,7 @@ function Shark() {
     canCatchInMouth,
     hitBoat,
     fillMouth,
+    setCanMove,
   };
 };
 

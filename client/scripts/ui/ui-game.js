@@ -119,6 +119,13 @@ function render(gameEngine) {
     }
   }
 
+  // FIRST FADE IN
+  const fristFadeIn = gameEngine.getFadeIn();
+  if (fristFadeIn < 1) {
+    ctx.fillStyle = `rgba(0, 0, 0, ${Math.min(1 - fristFadeIn, 1)})`;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
   // GAME OVER TRUMPS ALL
   const gameOver = gameEngine.getGameOverTimer();
   if (gameOver > 0) {
