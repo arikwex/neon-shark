@@ -1,6 +1,7 @@
 import bus from '../bus.js';
 import controllerManager from '../managers/controller-manager.js';
 import ABILITY from '../constants/abilities.js';
+import ABILITY_DATA from '../constants/ability-data.js';
 
 const SKIN_COLOR = '#57a';
 const SW = 17;
@@ -22,11 +23,17 @@ function Shark() {
   let inStasis = false;
   let statisTimer = 0;
 
+  let inFrenzy = false;
+  let frenzyTimer = 0;
+
   function update(state, dT) {
     // Controls
     let tx = 0;
     let ty = 0;
-    const MAX_FORCE = 800;
+    let MAX_FORCE = 800;
+    if (inFrenzy) {
+      MAX_FORCE = 1400;
+    }
     const MAX_TURN = 1.5 * MAX_FORCE / 800;
     if (!inStasis) {
       if (controllerManager.getUp()) { ty = -MAX_FORCE; }
@@ -109,6 +116,23 @@ function Shark() {
         bus.emit('ability:stasis-end');
       }
     }
+
+    if (inFrenzy) {
+      if (frenzyTimer > 0) {
+        frenzyTimer -= dT;
+        if (Math.random() > 0.7) {
+          bus.emit('ripple', {
+            x: x, y: y,
+            size: 20 + Math.random() * 20,
+            direction: Math.random() * 14,
+            duration: 1,
+          });
+        }
+      } else {
+        inFrenzy = false;
+        bus.emit('ability:frenzy-end');
+      }
+    }
   }
 
   function turn(a1, a2, maxRate) {
@@ -159,6 +183,10 @@ function Shark() {
       const p = 3.5 - stasisTimer;
       const stasisAlpha = Math.cos(p * p * 10) * 0.4 + 0.6;
       ctx.fillStyle = `rgba(255,255,255,${stasisAlpha})`;
+    }
+    if (inFrenzy) {
+      const frenzyAlpha = Math.cos(frenzyTimer * 15) * 0.4 + 0.6;
+      ctx.fillStyle = `rgba(255,90,20,${frenzyAlpha})`;
     }
     const xfm = ctx.getTransform();
 
@@ -244,35 +272,46 @@ function Shark() {
 
   function useAbility(state, abilityIndex) {
     const abilities = state.stats.getAbilities();
-    if (abilityIndex >= abilities.length) {
+    if (abilityIndex >= abilities.length || inStasis) {
       return;
     }
     const a = abilities[abilityIndex];
     const fish = state.stats.getFish();
     const hp = state.stats.getHealth();
     const maxHp = state.stats.getMaxHealth();
+    const fishCost = ABILITY_DATA[a].fish;
+    const hpCost = ABILITY_DATA[a].hearts;
 
     if (a == ABILITY.HEAL) {
-      if (fish >= 10 && hp < maxHp) {
+      if (fish >= fishCost  && hp < maxHp) {
         bus.emit('ability:heal');
+        vx = 0;
+        vy = 0;
       }
     }
     else if (a == ABILITY.STASIS) {
-      if (!inStasis && hp < maxHp) {
+      if (hp < maxHp) {
         bus.emit('ability:stasis');
       }
     }
-    else if (a == ABILITY.BITE) {
-      console.log('BITE');
+    else if (a == ABILITY.FRENZY) {
+      if (fish >= fishCost && !inFrenzy) {
+        bus.emit('ability:frenzy');
+      }
     }
-    else if (a == ABILITY.DASH) {
-      console.log('DASH');
+    else if (a == ABILITY.IRON_JAW) {
+      console.log('IRON JAW');
     }
   }
 
   function beginStasis() {
     inStasis = true;
     stasisTimer = 3.5;
+  }
+
+  function beginFrenzy() {
+    inFrenzy = true;
+    frenzyTimer = 5;
   }
 
   return {
@@ -288,6 +327,7 @@ function Shark() {
     getHeading,
     useAbility,
     beginStasis,
+    beginFrenzy,
   };
 };
 

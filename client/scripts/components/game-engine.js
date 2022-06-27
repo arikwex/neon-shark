@@ -23,7 +23,7 @@ const GameEngine = () => {
     particles: [],
   };
 
-  setTimeout(() => bus.emit('evolve'), 50);
+  // setTimeout(() => bus.emit('evolve'), 50);
 
   function initialize() {
     bus.on('evolve', () => {
@@ -80,7 +80,7 @@ const GameEngine = () => {
     });
 
     bus.on('spawn:fish', () => {
-      const n = 1 + Math.random() * 3;
+      const n = 1 + Math.random() * 10;
       const dir = Math.PI + (Math.random() - 0.5) * 2;
       const x = (Math.random() - 0.5) * 300;
       const y = state.level.getProgress() - canvas.height - 100;
@@ -141,6 +141,22 @@ const GameEngine = () => {
       }
       state.level.triggerShake(0.4);
       state.stats.addHealth(1);
+    });
+
+    bus.on('ability:frenzy', () => {
+      const baseHeading = state.shark.getHeading();
+      const x = state.shark.getMouthX();
+      const y = state.shark.getMouthY();
+      for (let i = -5; i <= 5; i++) {
+        const px = x;
+        const py = y;
+        const vx = Math.sin(baseHeading + i) * (30 + Math.random() * 140);
+        const vy = -Math.cos(baseHeading + i) * (30 + Math.random() * 140);
+        const duration = Math.random() * 0.4 + 0.4;
+        state.particles.push(new CircleParticle(px, py, vx, vy, 10, {r: 250, g: 100, b: 40, a: 0.4}, duration));
+      }
+      state.level.triggerShake(0.4);
+      state.shark.beginFrenzy();
     });
   }
 
