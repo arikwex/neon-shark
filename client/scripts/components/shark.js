@@ -372,16 +372,14 @@ function Shark() {
     const hpCost = ABILITY_DATA[a].hearts;
 
     if (a == ABILITY.HEAL) {
-      if (fish >= fishCost  && hp < maxHp) {
+      if (fish >= fishCost) {
         bus.emit('ability:heal');
         vx = 0;
         vy = 0;
       }
     }
     else if (a == ABILITY.STASIS) {
-      if (hp < maxHp) {
-        bus.emit('ability:stasis');
-      }
+      bus.emit('ability:stasis');
     }
     else if (a == ABILITY.FRENZY) {
       if (hp > hpCost && !inFrenzy) {
