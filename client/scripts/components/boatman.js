@@ -61,10 +61,10 @@ function Boatman(x, y, angle) {
     if (d2 < 3000 && state.shark.isBashing() && hitRecently <= 0) {
       hitRecently = 1;
       omega = (Math.random() - 0.5) * 3;
-      bvx += vx * 1;
-      bvy += vy * 1;
+      bvx += vx * 0.6;
+      bvy += vy * 0.6;
       hasMan = false;
-      bus.emit('shark:bash');
+      bus.emit('shark:bash', { x, y, vx, vy });
     }
     if (hitRecently > 0) {
       hitRecently -= dT;

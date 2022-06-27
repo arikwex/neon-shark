@@ -29,10 +29,12 @@ function render(gameEngine) {
   // Game elements
   state.fishes.forEach((f) => f.render(ctx));
   state.planks.forEach((p) => p.render(ctx));
+  state.drowners.forEach((p) => { if (!p.getInAir()) { p.render(ctx); } });
   state.shark.render(ctx);
   state.particles.forEach((p) => p.render(ctx));
   state.level.render(ctx);
   state.boats.forEach((b) => b.render(ctx));
+  state.drowners.forEach((p) => { if (p.getInAir()) { p.render(ctx); } });
   state.harpoons.forEach((h) => h.render(ctx));
 
   ctx.setTransform(xfm);

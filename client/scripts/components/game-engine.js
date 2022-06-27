@@ -7,6 +7,7 @@ import Shark from './shark.js';
 import Fish from './fish.js';
 import Harpoon from './harpoon.js';
 import Boatman from './boatman.js';
+import DrownMan from './drown-man.js';
 import Plank from './plank.js';
 import LineParticle from './line-particle.js';
 import CircleParticle from './circle-particle.js';
@@ -21,12 +22,14 @@ const GameEngine = () => {
     fishes: [],
     boats: [],
     planks: [],
+    drowners: [],
     harpoons: [],
     particles: [],
   };
 
   // setTimeout(() => bus.emit('evolve'), 50);
   // state.planks.push(new Plank(0, -300, 0));
+  state.drowners.push(new DrownMan(0, -300, Math.random() * 7, 0, -100));
 
   function initialize() {
     bus.on('evolve', () => {
@@ -95,18 +98,19 @@ const GameEngine = () => {
       state.particles.push(new RippleParticle(x, y, direction, size, duration));
     });
 
-    bus.on('shark:bash', () => {
+    bus.on('shark:bash', ({ x, y, vx, vy }) => {
       bus.emit('shark:mouth-full');
-      const x = state.shark.getMouthX();
-      const y = state.shark.getMouthY();
+      const mx = state.shark.getMouthX();
+      const my = state.shark.getMouthY();
       for (let i = 0; i < 10; i++) {
         const vx = (Math.random() - 0.5) * 430;
         const vy = (Math.random() - 0.5) * 230;
         const duration = 0.5 + Math.random() * 0.5;
-        state.particles.push(new CircleParticle(x, y, vx, vy, 10 + Math.random() * 10, {r: 100, g: 100, b: 100, a: 0.4}, duration));
+        state.particles.push(new CircleParticle(mx, my, vx, vy, 10 + Math.random() * 10, {r: 100, g: 100, b: 100, a: 0.4}, duration));
       }
       state.level.triggerShake(0.4);
       state.shark.hitBoat();
+      state.drowners.push(new DrownMan(x, y, Math.random() * 7, vx * 0.5, vy * 0.5));
     });
 
     bus.on('spawn:fish', () => {
@@ -257,6 +261,7 @@ const GameEngine = () => {
       state.fishes.forEach((f) => f.update(state, dT));
       state.boats.forEach((b) => b.update(state, dT));
       state.planks.forEach((p) => p.update(state, dT));
+      state.drowners.forEach((d) => d.update(state, dT));
       state.harpoons.forEach((h) => h.update(state, dT));
       state.particles.forEach((p) => p.update(state, dT));
 
@@ -264,6 +269,7 @@ const GameEngine = () => {
       filterRemove(state.boats);
       filterRemove(state.harpoons);
       filterRemove(state.planks);
+      filterRemove(state.drowners);
       filterRemove(state.particles);
     }
   }
