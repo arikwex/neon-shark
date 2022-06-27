@@ -17,7 +17,7 @@ function Plank(x, y, angle) {
     const my = state.shark.getJawY();
     const dx = mx - x;
     const dy = my - y;
-    if (state.shark.hasOpenMouth() && releaseTimer <= 0 && dx * dx + dy * dy < 600) {
+    if (state.shark.canCatchInMouth() && releaseTimer <= 0 && dx * dx + dy * dy < 600) {
       stuckInMouth = true;
       state.shark.fillMouth(this);
     }

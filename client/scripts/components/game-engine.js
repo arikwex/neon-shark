@@ -95,6 +95,20 @@ const GameEngine = () => {
       state.particles.push(new RippleParticle(x, y, direction, size, duration));
     });
 
+    bus.on('shark:bash', () => {
+      bus.emit('shark:mouth-full');
+      const x = state.shark.getMouthX();
+      const y = state.shark.getMouthY();
+      for (let i = 0; i < 10; i++) {
+        const vx = (Math.random() - 0.5) * 430;
+        const vy = (Math.random() - 0.5) * 230;
+        const duration = 0.5 + Math.random() * 0.5;
+        state.particles.push(new CircleParticle(x, y, vx, vy, 10 + Math.random() * 10, {r: 100, g: 100, b: 100, a: 0.4}, duration));
+      }
+      state.level.triggerShake(0.4);
+      state.shark.hitBoat();
+    });
+
     bus.on('spawn:fish', () => {
       const n = 1 + Math.random() * 6;
       const dir = Math.PI + (Math.random() - 0.5) * 2;
@@ -198,6 +212,23 @@ const GameEngine = () => {
         const duration = 0.5 + Math.random() * 0.5;
         state.particles.push(new CircleParticle(x, y, vx, vy, 10 + Math.random() * 10, {r: 80, g: 50, b: 30, a: 0.4}, duration));
       }
+    });
+
+    bus.on('ability:bash', () => {
+      const baseHeading = state.shark.getHeading();
+      const x = state.shark.getMouthX();
+      const y = state.shark.getMouthY();
+      for (let i = -5; i <= 5; i++) {
+        const px = x;
+        const py = y;
+        const vx = Math.sin(baseHeading + i) * (30 + Math.random() * 140);
+        const vy = -Math.cos(baseHeading + i) * (30 + Math.random() * 140);
+        const duration = Math.random() * 0.4 + 0.4;
+        state.particles.push(new CircleParticle(px, py, vx, vy, 10, {r: 40, g: 200, b: 40, a: 0.4}, duration));
+      }
+      state.level.triggerShake(0.4);
+      state.stats.feed(-10);
+      state.shark.beginBash();
     });
   }
 

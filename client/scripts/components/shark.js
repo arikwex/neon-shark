@@ -29,6 +29,9 @@ function Shark() {
   let inFrenzy = false;
   let frenzyTimer = 0;
 
+  let inBash = false;
+  let bashTimer = 0;
+
   function update(state, dT) {
     // Controls
     let tx = 0;
@@ -59,6 +62,11 @@ function Shark() {
     // Thrust physics
     vx += tx * dT;
     vy += ty * dT;
+
+    if (inBash) {
+      vx += Math.sin(heading) * 1400 * dT;
+      vy -= Math.cos(heading) * 1400 * dT;
+    }
 
     // Turn physics
     let targetHeading = Math.atan2(tx, -ty);
@@ -156,6 +164,23 @@ function Shark() {
         bus.emit('ability:frenzy-end');
       }
     }
+
+    if (inBash) {
+      if (bashTimer > 0) {
+        bashTimer -= dT;
+        if (Math.random() > 0.7) {
+          bus.emit('ripple', {
+            x: x, y: y,
+            size: 20 + Math.random() * 20,
+            direction: Math.random() * 14,
+            duration: 1,
+          });
+        }
+      } else {
+        inBash = false;
+        bus.emit('ability:bash-end');
+      }
+    }
   }
 
   function turn(a1, a2, maxRate) {
@@ -227,6 +252,10 @@ function Shark() {
     if (inFrenzy) {
       const frenzyAlpha = Math.cos(frenzyTimer * 15) * 0.4 + 0.6;
       ctx.fillStyle = `rgba(255,90,20,${frenzyAlpha})`;
+    }
+    if (inBash) {
+      const bashAlpha = Math.cos(bashTimer * 25) * 0.4 + 0.6;
+      ctx.fillStyle = `rgba(20,200,20,${bashAlpha})`;
     }
     const xfm = ctx.getTransform();
 
@@ -344,10 +373,29 @@ function Shark() {
          bus.emit('ability:iron-jaw');
       }
     }
+    else if (a == ABILITY.BASH) {
+      if (fish >= fishCost) {
+         bus.emit('ability:bash');
+      }
+    }
   }
 
   function hasOpenMouth() {
     return mouthContents == null;
+  }
+
+  function canCatchInMouth() {
+    return hasOpenMouth() && !inBash;
+  }
+
+  function isBashing() {
+    return inBash;
+  }
+
+  function hitBoat() {
+    vx = -vx * 0.6;
+    vy = -vy * 0.6;
+    bashTimer = -1;
   }
 
   function fillMouth(content) {
@@ -376,6 +424,11 @@ function Shark() {
     mouthContentTicker = 0;
   }
 
+  function beginBash() {
+    inBash = true;
+    bashTimer = 0.7;
+  }
+
   return {
     update,
     render,
@@ -393,7 +446,11 @@ function Shark() {
     beginStasis,
     beginFrenzy,
     beginIronJaw,
+    beginBash,
+    isBashing,
     hasOpenMouth,
+    canCatchInMouth,
+    hitBoat,
     fillMouth,
   };
 };
