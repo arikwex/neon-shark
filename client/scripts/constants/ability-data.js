@@ -1,7 +1,7 @@
 const FILL = '#eee';
 
 export default {
-  // Stage 0
+  // Stage 1
   'heal': {
     title: 'Heal',
     type: 0,
@@ -29,26 +29,71 @@ export default {
       ctx.strokeRect(-10, -10, 20, 20);
     }
   },
-  // Stage 1
-  'bite': {
-    title: 'Bite',
+  // Stage 2
+  'frenzy': {
+    title: 'Frenzy',
     type: 0,
     fish: 4,
     hearts: 0,
     time: 0,
-    description: [''],
+    description: ['Increase move speed'],
     icon: (ctx) => {
+      ctx.fillStyle = FILL;
+      ctx.beginPath();
+      ctx.moveTo(-20, -20);
+      ctx.lineTo(-16, -5);
+      ctx.lineTo(-12, -20);
+      ctx.closePath();
+      ctx.moveTo(-10, -20);
+      ctx.lineTo(-6, -10);
+      ctx.lineTo(-2, -20);
+      ctx.closePath();
+      ctx.moveTo(10, -20);
+      ctx.lineTo(6, -10);
+      ctx.lineTo(2, -20);
+      ctx.closePath();
+      ctx.moveTo(20, -20);
+      ctx.lineTo(16, -5);
+      ctx.lineTo(12, -20);
+      ctx.closePath();
 
+      ctx.moveTo(-20, 20);
+      ctx.lineTo(-16, 5);
+      ctx.lineTo(-12, 20);
+      ctx.closePath();
+      ctx.moveTo(-10, 20);
+      ctx.lineTo(-6, 10);
+      ctx.lineTo(-2, 20);
+      ctx.closePath();
+      ctx.moveTo(10, 20);
+      ctx.lineTo(6, 10);
+      ctx.lineTo(2, 20);
+      ctx.closePath();
+      ctx.moveTo(20, 20);
+      ctx.lineTo(16, 5);
+      ctx.lineTo(12, 20);
+      ctx.closePath();
+      ctx.fill();
     }
   },
-  'dash': {
-    title: 'Dash',
+  'iron-jaw': {
+    title: 'Iron Jaw',
     type: 1,
     fish: 0,
     hearts: 1,
     time: 0,
-    description: [''],
+    description: ['Use your mechanical jaws to', 'crush large objects that previously', 'had to be spit out.'],
     icon: (ctx) => {
+      ctx.strokeStyle = FILL;
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.arc(-20, 0, 15, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(-20, 0, 5, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.strokeRect(-5, 3, 30, 9);
+      ctx.strokeRect(26, 13, 8, -20);
     }
   }
 };

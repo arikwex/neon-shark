@@ -23,7 +23,7 @@ const GameEngine = () => {
     particles: [],
   };
 
-  // setTimeout(() => bus.emit('evolve'), 500);
+  setTimeout(() => bus.emit('evolve'), 50);
 
   function initialize() {
     bus.on('evolve', () => {

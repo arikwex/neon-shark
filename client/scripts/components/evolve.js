@@ -3,7 +3,7 @@ import ABILITY from '../constants/abilities.js';
 
 const ranks = {
   0: [ABILITY.HEAL, ABILITY.STASIS],
-  1: [ABILITY.BITE, ABILITY.DASH],
+  1: [ABILITY.FRENZY, ABILITY.IRON_JAW],
 };
 
 function Evolve() {
