@@ -18,6 +18,9 @@ function Shark() {
   let anim = 0;
   let wince = 0;
   let winceDirection = 0;
+  let mouthContents = null;
+  let mouthContentTimer = 0;
+  let mouthContentTicker = 0;
 
   // Abilities
   let inStasis = false;
@@ -33,6 +36,9 @@ function Shark() {
     let MAX_FORCE = 800;
     if (inFrenzy) {
       MAX_FORCE = 1400;
+    }
+    if (!state.shark.hasOpenMouth()) {
+      MAX_FORCE -= 300;
     }
     const MAX_TURN = 1.5 * MAX_FORCE / 800;
     if (!inStasis) {
@@ -99,6 +105,23 @@ function Shark() {
       wince = 0;
     }
 
+    // Mouth contents
+    if (mouthContents != null) {
+      if (mouthContentTimer > 0) {
+        mouthContentTimer -= dT;
+        mouthContentTicker += dT;
+        if (mouthContentTicker > 0.5) {
+          mouthContentTicker = 0.0;
+          bus.emit('shark:mouth-full');
+        }
+      } else {
+        bus.emit('shark:mouth-full');
+        mouthContentTimer = 0;
+        mouthContents.release(vx * 2 + Math.sin(heading) * 130, vy * 2 - Math.cos(heading) * 130);
+        mouthContents = null;
+      }
+    }
+
     // Abilities
     if (inStasis) {
       if (stasisTimer > 0) {
@@ -158,6 +181,16 @@ function Shark() {
     return y - Math.cos(heading) * 20;
   }
 
+  function getJawX() {
+    return x + Math.sin(heading) * 23 +
+      (- Math.cos(heading) * Math.cos(anim * 4) * 8);
+  }
+
+  function getJawY() {
+    return y - Math.cos(heading) * 23 +
+      (- Math.sin(heading) * Math.cos(anim * 4) * 8);
+  }
+
   function getVY() {
     return vy;
   }
@@ -172,6 +205,13 @@ function Shark() {
 
   function render(ctx) {
     const baseXfm = ctx.getTransform();
+
+    // DEBUG JAW
+    // ctx.fillStyle = 'red';
+    // ctx.translate(getJawX(), getJawY());
+    // ctx.rotate(heading);
+    // ctx.fillRect(-10, -20, 20, 20);
+    // ctx.setTransform(baseXfm);
 
     ctx.translate(x, y);
     ctx.rotate(heading);
@@ -304,6 +344,16 @@ function Shark() {
     }
   }
 
+  function hasOpenMouth() {
+    return mouthContents == null;
+  }
+
+  function fillMouth(content) {
+    mouthContents = content;
+    mouthContentTimer = 4;
+    mouthContentTicker = 0;
+  }
+
   function beginStasis() {
     inStasis = true;
     stasisTimer = 3.5;
@@ -324,10 +374,14 @@ function Shark() {
     getVY,
     getMouthX,
     getMouthY,
+    getJawX,
+    getJawY,
     getHeading,
     useAbility,
     beginStasis,
     beginFrenzy,
+    hasOpenMouth,
+    fillMouth,
   };
 };
 

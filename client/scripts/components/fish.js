@@ -29,7 +29,7 @@ function Fish(x, y, angle) {
     // Chomp physics
     const dx = state.shark.getMouthX() - x;
     const dy = state.shark.getMouthY() - y;
-    if (dx * dx + dy * dy < 600) {
+    if (state.shark.hasOpenMouth() && dx * dx + dy * dy < 600) {
       remove = true;
       bus.emit('feed', { n: 1 });
       bus.emit('bite', { x, y });

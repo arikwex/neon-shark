@@ -7,6 +7,7 @@ import Shark from './shark.js';
 import Fish from './fish.js';
 import Harpoon from './harpoon.js';
 import Boatman from './boatman.js';
+import Plank from './plank.js';
 import LineParticle from './line-particle.js';
 import CircleParticle from './circle-particle.js';
 import RippleParticle from './ripple-particle.js';
@@ -19,11 +20,13 @@ const GameEngine = () => {
     shark: new Shark(),
     fishes: [],
     boats: [],
+    planks: [],
     harpoons: [],
     particles: [],
   };
 
   // setTimeout(() => bus.emit('evolve'), 50);
+  state.planks.push(new Plank(0, -300, 0));
 
   function initialize() {
     bus.on('evolve', () => {
@@ -49,6 +52,19 @@ const GameEngine = () => {
       state.stats.removeHealth(1);
       state.shark.hit();
       state.level.hit();
+    });
+
+    bus.on('shark:mouth-full', () => {
+      const baseHeading = state.shark.getHeading();
+      const x = state.shark.getJawX();
+      const y = state.shark.getJawY();
+      for (let i = -2; i <= 2; i++) {
+        const vx = Math.sin(baseHeading + i) * (200 + Math.random() * 200);
+        const vy = -Math.cos(baseHeading + i) * (200 + Math.random() * 200);
+        const duration = Math.random() * 0.4 + 0.1;
+        state.particles.push(new LineParticle(x, y, vx, vy, {r: 80, g: 50, b: 30}, duration));
+      }
+      state.level.triggerShake(0.2);
     });
 
     bus.on('bite', ({x, y}) => {
@@ -80,7 +96,7 @@ const GameEngine = () => {
     });
 
     bus.on('spawn:fish', () => {
-      const n = 1 + Math.random() * 10;
+      const n = 1 + Math.random() * 6;
       const dir = Math.PI + (Math.random() - 0.5) * 2;
       const x = (Math.random() - 0.5) * 300;
       const y = state.level.getProgress() - canvas.height - 100;
@@ -184,12 +200,14 @@ const GameEngine = () => {
       state.level.update(state, dT);
       state.fishes.forEach((f) => f.update(state, dT));
       state.boats.forEach((b) => b.update(state, dT));
+      state.planks.forEach((p) => p.update(state, dT));
       state.harpoons.forEach((h) => h.update(state, dT));
       state.particles.forEach((p) => p.update(state, dT));
 
       filterRemove(state.fishes);
       filterRemove(state.boats);
       filterRemove(state.harpoons);
+      filterRemove(state.planks);
       filterRemove(state.particles);
     }
   }
