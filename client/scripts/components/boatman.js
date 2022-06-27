@@ -211,10 +211,32 @@ function Boatman(x, y, angle) {
     return remove;
   }
 
+  function getX() {
+    return x;
+  }
+
+  function getY() {
+    return y;
+  }
+
+  function unman() {
+    const hadPerson = hasMan;
+    hasMan = false;
+    return hadPerson;
+  }
+
+  function destroy() {
+    remove = true;
+  }
+
   return {
     update,
     render,
     shouldRemove,
+    unman,
+    destroy,
+    getX,
+    getY,
   };
 };
 

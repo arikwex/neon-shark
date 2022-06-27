@@ -10,7 +10,7 @@ const rankUps = {
 
 function Stats() {
   let health = 1;
-  let maxHealth = 3;
+  let maxHealth = 6;
   let fish = 0;
   let fishForNextEvolution = rankUps[0];
   let abilities = [ABILITY.HEAL, ABILITY.IRON_JAW, ABILITY.BASH, ABILITY.ROCKET];

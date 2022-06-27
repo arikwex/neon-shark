@@ -124,7 +124,7 @@ export default {
     title: 'Rocket',
     type: 1,
     fish: 0,
-    hearts: 2,
+    hearts: 1,
     time: 0,
     description: ['Fire a rocket that will explode', 'on first contact and destroy', 'anything it touches.'],
     icon: (ctx) => {

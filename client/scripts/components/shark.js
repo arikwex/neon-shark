@@ -364,18 +364,23 @@ function Shark() {
       }
     }
     else if (a == ABILITY.FRENZY) {
-      if (hp >= hpCost && !inFrenzy) {
+      if (hp > hpCost && !inFrenzy) {
         bus.emit('ability:frenzy');
       }
     }
     else if (a == ABILITY.IRON_JAW) {
       if (fish >= fishCost && !hasOpenMouth()) {
-         bus.emit('ability:iron-jaw');
+        bus.emit('ability:iron-jaw');
       }
     }
     else if (a == ABILITY.BASH) {
       if (fish >= fishCost) {
-         bus.emit('ability:bash');
+        bus.emit('ability:bash');
+      }
+    }
+    else if (a == ABILITY.ROCKET) {
+      if (hp > hpCost) {
+        bus.emit('ability:rocket');
       }
     }
   }

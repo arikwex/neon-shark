@@ -6,6 +6,7 @@ import Stats from './stats.js';
 import Shark from './shark.js';
 import Fish from './fish.js';
 import Harpoon from './harpoon.js';
+import Rocket from './rocket.js';
 import Boatman from './boatman.js';
 import DrownMan from './drown-man.js';
 import Plank from './plank.js';
@@ -21,6 +22,7 @@ const GameEngine = () => {
     shark: new Shark(),
     fishes: [],
     boats: [],
+    rockets: [],
     planks: [],
     drowners: [],
     harpoons: [],
@@ -28,8 +30,6 @@ const GameEngine = () => {
   };
 
   // setTimeout(() => bus.emit('evolve'), 50);
-  // state.planks.push(new Plank(0, -300, 0));
-  state.drowners.push(new DrownMan(0, -300, Math.random() * 7, 0, -100));
 
   function initialize() {
     bus.on('evolve', () => {
@@ -234,6 +234,45 @@ const GameEngine = () => {
       state.stats.feed(-10);
       state.shark.beginBash();
     });
+
+    bus.on('ability:rocket', () => {
+      const baseHeading = state.shark.getHeading();
+      const x = state.shark.getMouthX();
+      const y = state.shark.getMouthY();
+      for (let i = -5; i <= 5; i++) {
+        const px = x;
+        const py = y;
+        const vx = Math.sin(baseHeading + i) * (30 + Math.random() * 140);
+        const vy = -Math.cos(baseHeading + i) * (30 + Math.random() * 140);
+        const duration = Math.random() * 0.4 + 0.4;
+        state.particles.push(new CircleParticle(px, py, vx, vy, 10, {r: 50, g: 50, b: 50, a: 0.4}, duration));
+      }
+      state.level.triggerShake(0.4);
+      state.stats.removeHealth(1);
+      state.rockets.push(new Rocket(x, y, baseHeading - Math.PI / 2));
+    });
+
+    bus.on('boom', ({ x, y }) => {
+      for (let i = 0; i < 15; i++) {
+        const px = x + (Math.random() - 0.5) * 300;
+        const py = y + (Math.random() - 0.5) * 300;
+        const vx = (Math.random() - 0.5) * 240;
+        const vy = (Math.random() - 0.5) * 240;
+        const duration = Math.random() * 0.5 + 0.7;
+        state.particles.push(new CircleParticle(px, py, vx, vy, 30 + Math.random() * 30, {r: 250, g: 80, b: 40, a: 0.8}, duration));
+      }
+      state.level.triggerShake(0.6);
+      state.boats.forEach((b) => {
+        let dx = b.getX() - x;
+        let dy = b.getY() - y;
+        const m = Math.sqrt(dx * dx + dy * dy);
+        dx = dx / m * 100;
+        dy = dy / m * 100;
+        if (b.unman()) {
+          state.drowners.push(new DrownMan(b.getX(), b.getY(), Math.random() * 7, dx, dy));
+        }
+      });
+    });
   }
 
   function cleanup() {
@@ -260,6 +299,7 @@ const GameEngine = () => {
       state.level.update(state, dT);
       state.fishes.forEach((f) => f.update(state, dT));
       state.boats.forEach((b) => b.update(state, dT));
+      state.rockets.forEach((r) => r.update(state, dT));
       state.planks.forEach((p) => p.update(state, dT));
       state.drowners.forEach((d) => d.update(state, dT));
       state.harpoons.forEach((h) => h.update(state, dT));
@@ -270,6 +310,7 @@ const GameEngine = () => {
       filterRemove(state.harpoons);
       filterRemove(state.planks);
       filterRemove(state.drowners);
+      filterRemove(state.rockets);
       filterRemove(state.particles);
     }
   }
