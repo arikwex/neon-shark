@@ -4,6 +4,7 @@ import ABILITY from '../constants/abilities.js';
 const ranks = {
   0: [ABILITY.HEAL, ABILITY.STASIS],
   1: [ABILITY.FRENZY, ABILITY.IRON_JAW],
+  2: [ABILITY.BASH, ABILITY.ROCKET],
 };
 
 function Evolve() {

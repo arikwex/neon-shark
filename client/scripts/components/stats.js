@@ -2,20 +2,18 @@ import bus from '../bus.js';
 import ABILITY from '../constants/abilities.js';
 
 const rankUps = {
-  0: 6,
-  1: 14,
-  2: 26,
-  3: 42,
+  0: 10,
+  1: 20,
+  2: 40,
+  3: 80,
 };
 
 function Stats() {
-  let health = 1;
-  let maxHealth = 6;
+  let health = 3;
+  let maxHealth = 3;
   let fish = 0;
   let fishForNextEvolution = rankUps[0];
-  let abilities = [ABILITY.HEAL, ABILITY.FRENZY, ABILITY.BASH];
-  fish = 100;
-  fishForNextEvolution = 300;
+  let abilities = [];//[ABILITY.HEAL, ABILITY.FRENZY, ABILITY.BASH];
 
   function feed(n) {
     fish += n;

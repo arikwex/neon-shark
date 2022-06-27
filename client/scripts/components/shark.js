@@ -250,11 +250,6 @@ function Shark() {
     ctx.fillStyle = SKIN_COLOR;
 
     let arc = moveArc * 0.9 + winceDirection * wince * wince;
-    if (inStasis) {
-      const p = 3.5 - stasisTimer;
-      const stasisAlpha = Math.cos(p * p * 10) * 0.4 + 0.6;
-      ctx.fillStyle = `rgba(255,255,255,${stasisAlpha})`;
-    }
     if (inFrenzy) {
       const frenzyAlpha = Math.cos(frenzyTimer * 15) * 0.4 + 0.6;
       ctx.fillStyle = `rgba(255,90,20,${frenzyAlpha})`;
@@ -262,6 +257,11 @@ function Shark() {
     if (inBash) {
       const bashAlpha = Math.cos(bashTimer * 25) * 0.4 + 0.6;
       ctx.fillStyle = `rgba(20,200,20,${bashAlpha})`;
+    }
+    if (inStasis) {
+      const p = 2.5 - stasisTimer;
+      const stasisAlpha = Math.cos(p * p * 15) * 0.4 + 0.6;
+      ctx.fillStyle = `rgba(255,255,255,${stasisAlpha})`;
     }
     const xfm = ctx.getTransform();
 
@@ -417,7 +417,7 @@ function Shark() {
 
   function beginStasis() {
     inStasis = true;
-    stasisTimer = 3.5;
+    stasisTimer = 2.5;
   }
 
   function beginFrenzy() {
