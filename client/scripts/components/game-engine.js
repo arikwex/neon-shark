@@ -26,7 +26,7 @@ const GameEngine = () => {
   };
 
   // setTimeout(() => bus.emit('evolve'), 50);
-  state.planks.push(new Plank(0, -300, 0));
+  // state.planks.push(new Plank(0, -300, 0));
 
   function initialize() {
     bus.on('evolve', () => {
@@ -111,6 +111,15 @@ const GameEngine = () => {
       const x = (Math.random() - 0.5) * 300;
       const y = state.level.getProgress() - canvas.height - 100;
       state.boats.push(new Boatman(x, y, (Math.random() - 0.5) * 4));
+    });
+
+    bus.on('spawn:plank', () => {
+      let n = Math.random() * 3;
+      for (let i = 0; i < n; i++) {
+        const x = (Math.random() - 0.5) * 300;
+        const y = state.level.getProgress() - canvas.height - 100 - Math.random() * 200;
+        state.planks.push(new Plank(x, y, (Math.random() - 0.5) * 7));
+      }
     });
 
     bus.on('harpoon', ({x, y, aim}) => {

@@ -28,12 +28,14 @@ function Level(engineState) {
 
     // Event spawner
     if (eventTicker > 500) {
-      if (Math.random() > 0.75) {
+      if (Math.random() > 0.8) {
         bus.emit('spawn:boatman');
+      } else if (Math.random() > 0.8) {
+        bus.emit('spawn:plank');
       } else {
         bus.emit('spawn:fish');
       }
-      eventTicker -= 500 + Math.random() * 500;
+      eventTicker -= 300 + Math.random() * 800;
     }
 
     // Camera effect

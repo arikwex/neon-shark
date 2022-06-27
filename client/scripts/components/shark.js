@@ -350,7 +350,7 @@ function Shark() {
 
   function fillMouth(content) {
     mouthContents = content;
-    mouthContentTimer = 4;
+    mouthContentTimer = 3;
     mouthContentTicker = 0;
   }
 
