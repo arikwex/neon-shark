@@ -38,7 +38,7 @@ function Shark() {
       MAX_FORCE = 1400;
     }
     if (!state.shark.hasOpenMouth()) {
-      MAX_FORCE -= 300;
+      MAX_FORCE -= 400;
     }
     const MAX_TURN = 1.5 * MAX_FORCE / 800;
     if (!inStasis) {
@@ -335,12 +335,14 @@ function Shark() {
       }
     }
     else if (a == ABILITY.FRENZY) {
-      if (fish >= fishCost && !inFrenzy) {
+      if (hp >= hpCost && !inFrenzy) {
         bus.emit('ability:frenzy');
       }
     }
     else if (a == ABILITY.IRON_JAW) {
-      console.log('IRON JAW');
+      if (fish >= fishCost && !hasOpenMouth()) {
+         bus.emit('ability:iron-jaw');
+      }
     }
   }
 
@@ -364,6 +366,16 @@ function Shark() {
     frenzyTimer = 5;
   }
 
+  function beginIronJaw() {
+    if (mouthContents == null) {
+      return;
+    }
+    mouthContents.crush();
+    mouthContents = null;
+    mouthContentTimer = 0;
+    mouthContentTicker = 0;
+  }
+
   return {
     update,
     render,
@@ -380,6 +392,7 @@ function Shark() {
     useAbility,
     beginStasis,
     beginFrenzy,
+    beginIronJaw,
     hasOpenMouth,
     fillMouth,
   };

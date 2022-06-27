@@ -33,8 +33,8 @@ export default {
   'frenzy': {
     title: 'Frenzy',
     type: 0,
-    fish: 4,
-    hearts: 0,
+    fish: 0,
+    hearts: 1,
     time: 0,
     description: ['Increase move speed'],
     icon: (ctx) => {
@@ -79,8 +79,8 @@ export default {
   'iron-jaw': {
     title: 'Iron Jaw',
     type: 1,
-    fish: 0,
-    hearts: 1,
+    fish: 4,
+    hearts: 0,
     time: 0,
     description: ['Use your mechanical jaws to', 'crush large objects that previously', 'had to be spit out.'],
     icon: (ctx) => {

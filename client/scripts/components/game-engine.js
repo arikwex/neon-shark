@@ -114,10 +114,10 @@ const GameEngine = () => {
     });
 
     bus.on('spawn:plank', () => {
-      let n = Math.random() * 3;
+      let n = Math.random() * 5;
       for (let i = 0; i < n; i++) {
-        const x = (Math.random() - 0.5) * 300;
-        const y = state.level.getProgress() - canvas.height - 100 - Math.random() * 200;
+        const x = (Math.random() - 0.5) * 400;
+        const y = state.level.getProgress() - canvas.height - 100 - Math.random() * 300;
         state.planks.push(new Plank(x, y, (Math.random() - 0.5) * 7));
       }
     });
@@ -181,7 +181,23 @@ const GameEngine = () => {
         state.particles.push(new CircleParticle(px, py, vx, vy, 10, {r: 250, g: 100, b: 40, a: 0.4}, duration));
       }
       state.level.triggerShake(0.4);
+      state.stats.removeHealth(1);
       state.shark.beginFrenzy();
+    });
+
+    bus.on('ability:iron-jaw', () => {
+      bus.emit('shark:mouth-full');
+      const x = state.shark.getMouthX();
+      const y = state.shark.getMouthY();
+      state.level.triggerShake(0.4);
+      state.stats.feed(-4);
+      state.shark.beginIronJaw();
+      for (let i = 0; i < 10; i++) {
+        const vx = (Math.random() - 0.5) * 430;
+        const vy = (Math.random() - 0.5) * 230;
+        const duration = 0.5 + Math.random() * 0.5;
+        state.particles.push(new CircleParticle(x, y, vx, vy, 10 + Math.random() * 10, {r: 80, g: 50, b: 30, a: 0.4}, duration));
+      }
     });
   }
 

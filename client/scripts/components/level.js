@@ -28,13 +28,14 @@ function Level(engineState) {
 
     // Event spawner
     if (eventTicker > 500) {
-      if (Math.random() > 0.8) {
-        bus.emit('spawn:boatman');
-      } else if (Math.random() > 0.8) {
-        bus.emit('spawn:plank');
-      } else {
-        bus.emit('spawn:fish');
-      }
+      bus.emit('spawn:plank');
+      // if (Math.random() > 0.8) {
+      //   bus.emit('spawn:boatman');
+      // } else if (Math.random() > 0.8) {
+      //   bus.emit('spawn:plank');
+      // } else {
+      //   bus.emit('spawn:fish');
+      // }
       eventTicker -= 300 + Math.random() * 800;
     }
 

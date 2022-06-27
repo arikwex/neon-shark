@@ -56,7 +56,7 @@ function Plank(x, y, angle) {
 
     // Ripple animator
     ripple += dT;
-    if (ripple > 0.3) {
+    if (ripple > 0.5) {
       const rippleDir = Math.random() * 6.28;
       const px = x + Math.cos(angle + rippleDir) * 30;
       const py = y + Math.sin(angle + rippleDir) * 4;
@@ -103,6 +103,11 @@ function Plank(x, y, angle) {
     omega = (Math.random() - 0.5) * 5;
   }
 
+  function crush() {
+    release(0, 0);
+    remove = true;
+  }
+
   function shouldRemove() {
     return remove;
   }
@@ -112,6 +117,7 @@ function Plank(x, y, angle) {
     render,
     shouldRemove,
     release,
+    crush,
     getX,
     getY,
   };
